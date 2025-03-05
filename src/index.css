@@ -1,0 +1,8 @@
+@font-face {
+  font-family: GmarketSansLight;
+  src: url("/GmarketSansTTFLight.ttf");
+}
+
+body * {
+  font-family: "NanumpenScript";
+}

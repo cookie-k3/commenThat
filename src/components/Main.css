@@ -1,0 +1,48 @@
+.main {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-top: 80px; /*  헤더가 fixed 되었으므로 여백 추가 */
+}
+
+/* 중앙에 채팅 이미지(chat.png) 배치 */
+.chat-image {
+  width: 380px; /* 크기 조정 */
+  max-width: 100%; /* 반응형 유지 */
+  height: auto;
+  margin-bottom: 40px;
+}
+
+/* 텍스트 스타일 */
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px; /*댓글분석-인사이트 간격*/
+}
+
+p {
+  font-size: 1.3rem;
+  margin-bottom: 50px; /* 시작하기 버튼 간격*/
+}
+
+/* 버튼 스타일 */
+.start-button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.start-button:hover {
+  background-color: #0056b3;
+}

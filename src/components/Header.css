@@ -1,0 +1,97 @@
+.header {
+  position: fixed; /* 헤더를 화면 최상단에 고정 */
+  top: 0; /* 화면의 맨 위에 위치 */
+  left: 0;
+  width: 100%; /* 전체 너비 설정 */
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 40px; /* 상단 좌우 padding 조정 */
+  background: whitesmoke;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* 다른 요소보다 위에 위치하도록 설정 */
+}
+/* 헤더 내부 요소의 최대 너비를 제한하여 중앙 정렬 */
+.header-container {
+  width: 100%;
+  max-width: 1200px; /* 헤더가 너무 넓어지지 않도록 설정 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+/* 로고를 왼쪽으로 이동 */
+.logo {
+  flex: 1; /* 로고가 왼쪽 정렬되도록 설정 */
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 20px; /*왼쪽으로 이동 */
+  /* width: 25%;*/
+}
+
+/* 로고 스타일 */
+.logo img {
+  height: 35px;
+  width: auto;
+}
+
+/* 네비게이션 스타일 */
+.nav {
+  display: flex;
+  flex: 2; /* 네비게이션을 가운데로 정렬 */
+  justify-content: center; /* 가운데 정렬 */
+  gap: 50px; /* 버튼 간격 */
+}
+
+/* .nav a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nav a:hover {
+  color: #007bff;
+} */
+
+.nav-item {
+  cursor: pointer; /* 마우스 오버 시 포인터 모양으로 변경 */
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  color: #007bff;
+}
+
+/* 우측 버튼 스타일 */
+.auth-buttons {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  justify-content: flex-end;
+  align-items: center; /* 버튼이 정렬되도록 설정 */
+}
+
+.join {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.login {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.login:hover {
+  background-color: #0056b3;
+}
