@@ -2,15 +2,15 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/trend_analysis?serverTimezone=UTC&characterEncoding=UTF-8
-#    username: dabin
-#    password: dabin1234
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/commenthat?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: dabin1234
   jpa:
-#    database: mysql
-#    database-platform: org.hibernate.dialect.MySQL8Dialect
-#    show-sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
     hibernate:
 #      ddl-auto: update
       ddl-auto: create
@@ -27,7 +27,7 @@ spring:
           enabled: true
           algorithm: sha-256
   config:
-    import: applicationValue.yml
+    import: applicationValue.yaml
 
 
 logging:
