@@ -21,14 +21,18 @@ public class VideoComment {
     private String comment;
     @Column(name = "like_count")
     private Long likeCount;
-    @Column(name = "create_date")
+    @Column(name = "upload_date")
     private LocalDateTime date;
 
     @Column(name = "is_positive")
     private Integer isPositive; // 0:부정 1:긍정
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "video_meta_id")
-    private VideoMeta videoMeta;
+    @JoinColumn(name = "video_id")
+    private Video video;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
 }

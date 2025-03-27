@@ -32,7 +32,4 @@ public class VideoMeta {
     @JoinColumn(name = "video_id")
     private Video video;
 
-    @OneToMany(mappedBy = "videoMeta")
-    private List<VideoComment> videoComments = new ArrayList<>();
-
 }

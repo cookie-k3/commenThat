@@ -23,7 +23,7 @@ public class Video {
     private String title;
     private String description;
 
-    @Column(name = "create_date")
+    @Column(name = "upload_date")
     private LocalDateTime date;
 
     private String thumbnail;
@@ -34,4 +34,10 @@ public class Video {
 
     @OneToMany(mappedBy = "video")
     private List<VideoMeta> videoMetas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "video")
+    private List<VideoComment> videoComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "video")
+    private List<CategoryStat> categoryStats = new ArrayList<>();
 }

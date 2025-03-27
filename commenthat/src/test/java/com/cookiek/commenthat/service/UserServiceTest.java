@@ -33,7 +33,6 @@ public class UserServiceTest {
         user.setName("dabin");
         user.setEmail("db@naver.com");
         user.setPassword("dabin1234");
-        user.setApi(api);
 
         //when
         Long savedId = userService.join(user);

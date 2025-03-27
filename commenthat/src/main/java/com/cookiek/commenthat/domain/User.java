@@ -18,10 +18,10 @@ public class User {
     private String name;
     private String email;
     private String password;
-    private String api;
+//    private String api;
 
     @OneToMany(mappedBy = "user")
-    private List<Topic> topics = new ArrayList<>();
+    private List<Contents> contents = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<ChannelInfo> channelInfos = new ArrayList<>();
