@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
-//@Rollback(value = false)
-@Rollback
+@Rollback(value = false)
+//@Rollback
 public class UserServiceTest {
 
     @Autowired UserService userService;
@@ -33,6 +33,7 @@ public class UserServiceTest {
         user.setName("dabin");
         user.setEmail("db@naver.com");
         user.setPassword("dabin1234");
+        user.setChannel("워크맨-Workman");
 
         //when
         Long savedId = userService.join(user);
