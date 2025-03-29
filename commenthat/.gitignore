@@ -18,6 +18,8 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+applicationValue.yaml
+
 .idea
 *.iws
 *.iml
@@ -36,4 +38,3 @@ out/
 ### VS Code ###
 .vscode/
 
-!**/src/main/resources/applicationValue.yaml
