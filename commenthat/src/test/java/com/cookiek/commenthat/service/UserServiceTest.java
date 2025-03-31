@@ -33,14 +33,14 @@ public class UserServiceTest {
         user.setName("dabin");
         user.setEmail("db@naver.com");
         user.setPassword("dabin1234");
-        user.setChannel("워크맨-Workman");
+        user.setChannelName("워크맨-Workman");
 
         //when
         Long savedId = userService.join(user);
 
         //then
         em.flush();
-        assertEquals(user, userRepository.findOne(savedId));
+        assertEquals(user, userRepository.findById(savedId));
 
     }
 

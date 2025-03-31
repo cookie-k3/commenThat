@@ -18,15 +18,17 @@ public class User {
     private String name;
     private String email;
     private String password;
-    private String channel;
+    @Column(name = "channel_name")
+    private String channelName;
 //    private String api;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Contents> contents = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<ChannelInfo> channelInfos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Video> videos = new ArrayList<>();
+
 }

@@ -38,8 +38,11 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// YouTube API 관련 의존성
-	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	//Spring Cloud Gateway: Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider 에러 해결
+	runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.118.Final:osx-aarch_64")
+
 }
 
 tasks.named('test') {

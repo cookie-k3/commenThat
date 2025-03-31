@@ -3,9 +3,12 @@ package com.cookiek.commenthat.repository;
 import com.cookiek.commenthat.domain.User;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,8 +32,21 @@ public class UserRepository {
         return users;
     }
 
-    public User findOne(Long user_id) {
+    public User findById(Long user_id) {
         return em.find(User.class, user_id);
     }
+
+    public User findByIdWithChannelInfos(Long userId) {
+        return em.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.channelInfos WHERE u.id = :userId", User.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
+    }
+
+//    public User findByIdWithFetchJoin(Long user_id) {
+//        User user = em.createQuery("SELECT u FROM User u JOIN FETCH u.channelInfos WHERE u.id = :userId", User.class)
+//                .setParameter("userId", user_id)
+//                .getSingleResult();
+//        return user;
+//    }
 
 }
