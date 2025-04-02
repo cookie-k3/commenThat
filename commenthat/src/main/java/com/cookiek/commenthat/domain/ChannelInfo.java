@@ -48,12 +48,4 @@ public class ChannelInfo {
         return channelInfo;
     }
 
-    public static ChannelInfo createChannelInfoWithoutUser(Long userId, Long subscriber, Long totalViews) {
-        ChannelInfo channelInfo = new ChannelInfo();
-        channelInfo.setDate(LocalDateTime.now());
-        channelInfo.setTotalViews(totalViews);
-        channelInfo.setSubscriber(subscriber);
-        return channelInfo;
-    }
-
 }

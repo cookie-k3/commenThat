@@ -2,6 +2,7 @@ package com.cookiek.commenthat.repository;
 
 import com.cookiek.commenthat.domain.User;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -42,11 +43,31 @@ public class UserRepository {
                 .getSingleResult();
     }
 
-//    public User findByIdWithFetchJoin(Long user_id) {
-//        User user = em.createQuery("SELECT u FROM User u JOIN FETCH u.channelInfos WHERE u.id = :userId", User.class)
-//                .setParameter("userId", user_id)
-//                .getSingleResult();
-//        return user;
-//    }
+    public Optional<User> findByIdOptional(Long userId) {
+        try {
+            User user = em.createQuery(
+                            "SELECT u FROM User u " +
+                                    "LEFT JOIN FETCH u.contents " +
+                                    "LEFT JOIN FETCH u.channelInfos " +
+                                    "LEFT JOIN FETCH u.videos " + // 모든 지연 로딩된 컬렉션을 포함
+                                    "WHERE u.id = :userId", User.class)
+                    .setParameter("userId", userId)
+                    .getSingleResult();
+            return Optional.of(user);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<User> findByIdWithChannelInfosOptional(Long userId) {
+        try {
+            User user = em.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.channelInfos WHERE u.id = :userId", User.class)
+                    .setParameter("userId", userId)
+                    .getSingleResult();
+            return Optional.of(user);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
 
 }

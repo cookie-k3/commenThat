@@ -15,8 +15,6 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ChannelInfoService {
-//    private final ChannelInfoPersistenceService channelInfoPersistenceService;
-    private final ChannelInfoRepository channelInfoRepository;
     private final FetchInitialDataService fetchInitialDataService;
     private final UserService userService;
 
@@ -26,23 +24,8 @@ public class ChannelInfoService {
         User user = userService.findUserById(userId);
         String channelName = user.getChannelName();
 
-
         fetchInitialDataService.fetchChannelInfoAsync(channelName, user.getId());
-
-//        futureChannelInfoDTO.thenAccept(channelInfoDTO -> {
-//            if (channelInfoDTO != null) {
-//                saveWithoutEntity(user, channelInfoDTO.getSubscriberCount(), channelInfoDTO.getViewCount());
-//            }
-//        }).exceptionally(ex -> {
-//            ex.printStackTrace();
-//            return null;
-//        });
     }
 
-    @Transactional
-    public void saveWithoutEntity(User user, Long subscriber, Long views) {
 
-        ChannelInfo channelInfo = ChannelInfo.createChannelInfo(user, subscriber, views);
-        channelInfoRepository.save(channelInfo);
-    }
 }

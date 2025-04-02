@@ -22,17 +22,4 @@ public class ChannelInfoRepository {
         }
     }
 
-    public void saveWithoutUser(ChannelInfo channelInfo, Long userId) {
-
-        User user = userRepository.findById(userId);
-        channelInfo.setUser(user);
-
-        if (channelInfo.getId() == null) {
-            em.persist(channelInfo);
-        }
-        else {
-            em.merge(channelInfo);
-        }
-    }
-
 }

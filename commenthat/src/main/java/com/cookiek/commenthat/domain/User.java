@@ -17,7 +17,10 @@ public class User {
     private Long id;
     private String name;
     private String email;
+    @Column(name = "login_id")
+    private String loginId;
     private String password;
+    private String gender;
     @Column(name = "channel_name")
     private String channelName;
 //    private String api;
