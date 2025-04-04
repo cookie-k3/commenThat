@@ -1,5 +1,6 @@
 package com.cookiek.commenthat.domain;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,9 @@ public class User {
     private String gender;
     @Column(name = "channel_name")
     private String channelName;
+    @Column(name = "channel_id")
+    @Nullable
+    private String channelId;
 //    private String api;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

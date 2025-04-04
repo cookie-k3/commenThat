@@ -39,6 +39,10 @@ dependencies {
 
 	// YouTube API 관련 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'com.google.api-client:google-api-client:2.2.0'
+	implementation 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'com.google.http-client:google-http-client-jackson2:1.43.3'
 
 	//Spring Cloud Gateway: Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider 에러 해결
 	runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.118.Final:osx-aarch_64")
