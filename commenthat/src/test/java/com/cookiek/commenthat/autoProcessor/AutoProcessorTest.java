@@ -30,7 +30,7 @@ public class AutoProcessorTest {
         //when
         User user = userService.findUserById(userId);
         String channelId = user.getChannelId();
-        fetchChannelInfoService.fetchChannelInfoAsync(channelId, user.getId());
+        fetchChannelInfoService.fetchAndSaveAsync(channelId, user.getId());
 
         // Then
         Thread.sleep(3000); // 간단 대기 (임시, 비동기 작업 끝날 때까지 대기)

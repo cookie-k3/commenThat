@@ -49,26 +49,3 @@ public class FetchChannelIdService {
     }
 
 }
-
-
-//    private Mono<String> getChannelId(String channelName) {
-//        return webClient.get()
-//                .uri(uriBuilder -> uriBuilder
-//                        .path("/search")
-//                        .queryParam("part", "snippet")
-//                        .queryParam("q", channelName)
-//                        .queryParam("type", "channel")
-//                        .queryParam("key", apiKey)
-//                        .build())
-//                .retrieve()
-//                .bodyToMono(Map.class)
-//                .flatMap(response -> {
-//                    if (response.containsKey("items")) {
-//                        Map<String, Object> item = ((List<Map<String, Object>>) response.get("items")).get(0);
-//                        Map<String, Object> idMap = (Map<String, Object>) item.get("id");
-//                        return Mono.justOrEmpty((String) idMap.get("channelId"));
-//                    }
-//                    return Mono.empty();
-//                });
-//    }
-

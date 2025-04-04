@@ -23,7 +23,7 @@ public class AutoProcessorController {
     public Map<String, String> fetchChannelInfo(@RequestParam Long userId) {
         User user = userService.findUserById(userId);
         String channelId = user.getChannelId();
-        fetchChannelInfoService.fetchChannelInfoAsync(channelId, user.getId());
+        fetchChannelInfoService.fetchAndSaveAsync(channelId, user.getId());
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "success fetchChannelInfo");
