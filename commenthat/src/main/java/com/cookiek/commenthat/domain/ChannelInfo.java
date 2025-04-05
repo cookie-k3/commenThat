@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -42,7 +44,7 @@ public class ChannelInfo {
     public static ChannelInfo createChannelInfo(User user, Long totalViews, Long subscriber) {
         ChannelInfo channelInfo = new ChannelInfo();
         channelInfo.setUser(user);
-        channelInfo.setDate(LocalDateTime.now());
+        channelInfo.setDate(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
         channelInfo.setTotalViews(totalViews);
         channelInfo.setSubscriber(subscriber);
         return channelInfo;

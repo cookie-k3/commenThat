@@ -4,7 +4,7 @@ spring:
     suffix: .html
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/commenthat?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/commenthat?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: dabin1234
   jpa:

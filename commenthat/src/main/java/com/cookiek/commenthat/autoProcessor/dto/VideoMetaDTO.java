@@ -2,13 +2,11 @@ package com.cookiek.commenthat.autoProcessor.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @AllArgsConstructor
 @Getter
-public class ChannelInfoDTO {
-
-    private Long subscriberCount;
-    private Long viewCount;
-
+public class VideoMetaDTO {
+    private Long views;
+    private Long likes;
+    private Long commentCount;
 }

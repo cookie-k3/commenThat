@@ -18,6 +18,8 @@ public class VideoComment {
     @Column(name = "video_comment_id")
     private Long id;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String comment;
     @Column(name = "like_count")
     private Long likeCount;

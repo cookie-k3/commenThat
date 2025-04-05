@@ -23,6 +23,7 @@ public class VideoMeta {
     @Column(name = "update_date")
     private LocalDateTime date;
     private Long views;
+    private Long likes;
     private Long subscriber;
 
     @Column(name = "comment_count")
