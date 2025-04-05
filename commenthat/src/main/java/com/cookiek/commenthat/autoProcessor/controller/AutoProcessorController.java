@@ -1,9 +1,6 @@
 package com.cookiek.commenthat.autoProcessor.controller;
 
-import com.cookiek.commenthat.autoProcessor.service.FetchChannelInfoService;
-import com.cookiek.commenthat.autoProcessor.service.FetchVideoMetaService;
-import com.cookiek.commenthat.autoProcessor.service.FetchVideoService;
-import com.cookiek.commenthat.autoProcessor.service.NotSyncService;
+import com.cookiek.commenthat.autoProcessor.service.*;
 import com.cookiek.commenthat.domain.User;
 import com.cookiek.commenthat.domain.Video;
 import com.cookiek.commenthat.repository.UserInterface;
@@ -32,6 +29,7 @@ public class AutoProcessorController {
     private final FetchChannelInfoService fetchChannelInfoService;
     private final FetchVideoService fetchVideoService;
     private final FetchVideoMetaService fetchVideoMetaService;
+    private final FetchVideoCommentService fetchVideoCommentService;
 
     //http://localhost:8080/fetch-channel-info?userId=2
     @GetMapping("/fetch-channel-info")
@@ -87,8 +85,41 @@ public class AutoProcessorController {
         fetchVideoMetaService.fetchVideosMetaAsync(videoIdList, subscriber);
 
         Map<String, String> response = new HashMap<>();
-        response.put("message", "success fetchVideoInit");
+        response.put("message", "success fetchVideoMeta");
 
+        return response;
+    }
+
+    //http://localhost:8080/fetch-video-comment?videoId=34
+    @GetMapping("/fetch-video-comment")
+    //    @Scheduled(cron = "0 0 12 * * ?") // 매일 12시에 실행
+    public Map<String, String> fetchVideoComment(@RequestParam Long videoId) {
+        fetchVideoCommentService.fetchVideoCommentsAsync(videoId);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "success fetchVideoComment");
+        return response;
+    }
+
+    //http://localhost:8080/fetch-video-comment-all?userId=2
+    @GetMapping("/fetch-video-comment-all")
+// @Scheduled(cron = "0 0 12 * * ?")
+    public Map<String, String> fetchVideoCommentAll(@RequestParam Long userId) {
+        List<Video> videos = videoInterface.findAllByUserId(userId);
+
+        if (videos.isEmpty()) {
+            log.warn("userId={} 에 해당하는 영상이 없습니다.", userId);
+        }
+
+        for (Video video : videos) {
+            log.info("댓글 수집 시작 - videoId={}, title={}, uploadDate={}", video.getId(), video.getTitle(), video.getDate());
+            fetchVideoCommentService.fetchVideoCommentsAsync(video.getId());
+        }
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "success fetchVideoComment");
+        response.put("userId", String.valueOf(userId));
+        response.put("videoCount", String.valueOf(videos.size()));
         return response;
     }
 

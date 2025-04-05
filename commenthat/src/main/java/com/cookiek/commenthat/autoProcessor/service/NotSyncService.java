@@ -46,6 +46,7 @@ public class NotSyncService {
         return (String) id.get("channelId"); // 채널 ID 반환
     }
 
+    // 채널 설정에서 구독자 수를 숨기거나 정책상 노출이 제한되어서 1000 단위로 반올림된 숫자를 보여줌
     public Long getSubscriberCount(String channelId) {
         RestTemplate restTemplate = new RestTemplate();
 
