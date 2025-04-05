@@ -21,12 +21,17 @@ public class Video {
     private Long id;
 
     private String title;
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "upload_date")
     private LocalDateTime date;
 
     private String thumbnail;
+
+    @Column(name = "video_youtube_id")
+    private String videoYoutubeId;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")

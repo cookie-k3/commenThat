@@ -1,6 +1,7 @@
 package com.cookiek.commenthat.autoProcessor.controller;
 
 import com.cookiek.commenthat.autoProcessor.service.FetchChannelInfoService;
+import com.cookiek.commenthat.autoProcessor.service.FetchVideoService;
 import com.cookiek.commenthat.domain.User;
 import com.cookiek.commenthat.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class AutoProcessorController {
 
     private final UserService userService;
     private final FetchChannelInfoService fetchChannelInfoService;
+    private final FetchVideoService fetchVideoService;
 
     @GetMapping("/fetch-channel-info")
     @Transactional
@@ -29,5 +31,21 @@ public class AutoProcessorController {
         response.put("message", "success fetchChannelInfo");
         return response;
     }
+
+    //http://localhost:8080/fetch-video-init?userId=2
+    @GetMapping("/fetch-video-init")
+    @Transactional
+    //    @Scheduled(cron = "0 0 12 * * ?") // 매일 12시에 실행
+    public Map<String, String> fetchVideoInti(@RequestParam Long userId) {
+        User user = userService.findUserById(userId);
+        String channelId = user.getChannelId();
+        fetchVideoService.fetchVideosInitAsync(channelId, user.getId());
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "success fetchVideoInit");
+        return response;
+    }
+
+
 
 }

@@ -5,6 +5,7 @@ import com.cookiek.commenthat.domain.ChannelInfo;
 import com.cookiek.commenthat.repository.ChannelInfoInterface;
 import com.cookiek.commenthat.repository.UserInterface;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -52,15 +54,6 @@ public class FetchChannelInfoService {
         this.executorService = Executors.newFixedThreadPool(10); // 병렬 스레드 수 조절 가능
     }
 
-    /**
-     * 외부에서 호출: 병렬로 사용자 채널 정보 요청
-     */
-    public void fetchChannelsForUserList(List<Long> userIdList, Map<Long, String> userChannelMap) {
-        for (Long userId : userIdList) {
-            String channelId = userChannelMap.get(userId);
-            executorService.submit(() -> fetchAndSaveAsync(channelId, userId));
-        }
-    }
 
     /**
      * WebClient 호출 + DB 저장 (논블로킹 처리)
@@ -122,6 +115,28 @@ public class FetchChannelInfoService {
                     }
                 });
     }
+
+    @PreDestroy
+    public void shutdown() {
+        log.info("FetchChannelInfoService 종료 중... ExecutorService shutdown 시작");
+
+        executorService.shutdown(); // 먼저 graceful shutdown
+
+        try {
+            // 최대 10초 대기 후 강제 종료 시도
+            if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+                log.warn("ExecutorService가 종료되지 않아 강제 종료 시도");
+                executorService.shutdownNow();
+            } else {
+                log.info("ExecutorService 정상 종료됨");
+            }
+        } catch (InterruptedException e) {
+            log.error("ExecutorService 종료 중 인터럽트 발생", e);
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+
 }
 
 //이 구조는 Spring MVC 환경에서:
