@@ -1,0 +1,99 @@
+/* 전체 배경 */
+.login-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-image: url("../assets/mash.png");
+  background-size: cover;
+  background-position: center;
+  font-family: "GmarketMedium", sans-serif;
+  box-sizing: border-box;
+}
+
+/* 좌측 모자 이미지 */
+.login-left {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 끝에 붙이기 */
+  align-items: center;
+  padding-right: 80px; /* 중앙 정렬 맞추기 위한 우측 여백 */
+}
+
+.login-left img {
+  width: 95%;
+  max-width: 520px;
+  height: auto;
+}
+
+/* 우측 로그인 폼 */
+.login-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start; /* 왼쪽에서 시작 (정중앙 우측 위치) */
+  align-items: center;
+  padding-left: 80px; /*간격 넓게*/
+}
+
+.login-box {
+  background: white;
+  padding: 40px 45px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px; /*박스 자체 넓이*/
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 로고 */
+.logo {
+  width: 190px;
+  margin-bottom: 35px;
+  cursor: pointer;
+}
+
+/* 입력 */
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* 버튼 */
+.login-box button {
+  display: flex;
+  justify-content: center;
+  width: 100%; /*버튼 가로 크기*/
+  background-color: #273a84;
+  color: white;
+  padding: 12px 0; /*버튼 높이, 좌우 내부 여백*/
+  font-size: 15px; /*글자 크기*/
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.login-box button:hover {
+  background-color: #1c2e6e;
+}
+
+/* 링크 */
+.login-links {
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+  font-family: "GmarketLight";
+}
+
+.login-links span:hover {
+  text-decoration: underline;
+}

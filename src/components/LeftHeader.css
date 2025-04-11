@@ -1,0 +1,75 @@
+.left-header {
+  width: 200px;
+  background-color: white;
+  padding: 20px;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.side-logo {
+  width: 150px;
+  margin-bottom: 50px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* 메뉴 섹션을 전체 중앙 정렬하기 위한 wrapper */
+.menu-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; 중앙 정렬 */
+  width: 100%;
+}
+
+.menu-section {
+  margin-bottom: 60px;
+  padding-left: 5px;
+}
+
+.section-title {
+  font-weight: bold;
+  color: #415686;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  margin: 5px 0;
+  cursor: pointer;
+  text-align: left;
+  font-size: 16px;
+  color: #333;
+}
+
+button:hover {
+  color: #5879e4;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
+.logout-button {
+  margin-top: 20px;
+  padding: 8px 16px;
+  background-color: #415686;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #2c3a5f;
+}

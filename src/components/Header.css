@@ -1,63 +1,54 @@
 .header {
-  position: fixed; /* 헤더를 화면 최상단에 고정 */
-  top: 0; /* 화면의 맨 위에 위치 */
+  position: fixed;
+  top: 0;
   left: 0;
-  width: 100%; /* 전체 너비 설정 */
-  height: 70px;
+  width: 100%;
+  height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0px 40px; /* 상단 좌우 padding 조정 */
+  padding: 0 20px;
   background: whitesmoke;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* 다른 요소보다 위에 위치하도록 설정 */
+  z-index: 1000;
+  box-sizing: border-box;
 }
-/* 헤더 내부 요소의 최대 너비를 제한하여 중앙 정렬 */
+
 .header-container {
   width: 100%;
-  max-width: 1200px; /* 헤더가 너무 넓어지지 않도록 설정 */
+  max-width: 1300px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin: 0 auto; /* 중앙 정렬 */
+  justify-content: space-between;
 }
 
-/* 로고를 왼쪽으로 이동 */
+/* 로고를 왼쪽에 더 붙이기 */
 .logo {
-  flex: 1; /* 로고가 왼쪽 정렬되도록 설정 */
+  flex: 1;
   display: flex;
   justify-content: flex-start;
-  padding-left: 20px; /*왼쪽으로 이동 */
-  /* width: 25%;*/
+  padding-left: 0px;
+  /* margin-left: px; */
 }
 
-/* 로고 스타일 */
 .logo img {
-  height: 35px;
+  height: 40px; /* 기존 크기 유지 */
   width: auto;
+  object-fit: contain; /* 잘림 방지 */
+  display: block; /* inline 요소에서 생길 수 있는 위아래 여백 제거 */
+  margin-top: 40px; /* 로고를 아래로 내리는 */
 }
 
-/* 네비게이션 스타일 */
+/* 가운데 메뉴 정확히 중앙 정렬 */
 .nav {
+  flex: 2;
   display: flex;
-  flex: 2; /* 네비게이션을 가운데로 정렬 */
-  justify-content: center; /* 가운데 정렬 */
-  gap: 50px; /* 버튼 간격 */
+  justify-content: center;
+  gap: 100px;
 }
-
-/* .nav a {
-  text-decoration: none;
-  color: #555;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.nav a:hover {
-  color: #007bff;
-} */
 
 .nav-item {
-  cursor: pointer; /* 마우스 오버 시 포인터 모양으로 변경 */
+  cursor: pointer;
   text-decoration: none;
   color: #555;
   font-weight: 500;
@@ -67,13 +58,19 @@
   color: #007bff;
 }
 
-/* 우측 버튼 스타일 */
+/* 우측 버튼 오른쪽 끝에 정렬 */
 .auth-buttons {
-  display: flex;
   flex: 1;
-  gap: 20px;
+  display: flex;
   justify-content: flex-end;
-  align-items: center; /* 버튼이 정렬되도록 설정 */
+  align-items: center;
+  gap: 20px;
+  padding-right: 10px; /* 우측 여백 추가 */
+}
+
+.login-id {
+  font-weight: bold;
+  color: #333;
 }
 
 .join {

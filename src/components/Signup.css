@@ -1,0 +1,115 @@
+/* 전체 배경 */
+.signup-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+}
+
+/* 로고 */
+.logo-container {
+  position: absolute;
+  top: 30px;
+}
+
+.logo {
+  width: 200px;
+}
+
+/* 컨텐츠 배치 */
+.signup-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  width: 80%;
+  max-width: 1200px;
+}
+
+/* 좌측 이미지 */
+.signup-image img {
+  width: 400px;
+  max-width: 100%;
+}
+
+/* 우측 회원가입 폼 */
+.signup-form {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 400px;
+}
+
+.signup-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.api-text {
+  font-size: 14px;
+  color: #777;
+  text-align: right;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #007bff;
+  background: white;
+  color: #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.button-group button:hover,
+.button-group .active {
+  background: #007bff;
+  color: white;
+}
+
+/* 가입 완료 버튼 */
+.signup-button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.signup-button:hover {
+  background-color: #0056b3;
+}
+
+.error-text {
+  color: red;
+  font-size: 13px;
+  margin: -5px 0 10px;
+}

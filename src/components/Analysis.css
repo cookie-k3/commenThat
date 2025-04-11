@@ -1,0 +1,140 @@
+/* 전체 레이아웃 (Home과 통일) */
+.home-container {
+  display: flex;
+  height: 100vh;
+  background-color: whitesmoke;
+}
+
+.home-main {
+  flex: 1;
+  padding: 0 40px;
+  overflow-x: hidden;
+}
+
+/* 상단 헤더 */
+.home-topbar-wrapper {
+  background-color: white;
+  width: calc(100% + 80px);
+  margin: 0 -40px;
+  padding: 20px 40px;
+  box-sizing: border-box;
+  white-space: nowrap; /*  줄바꿈 방지 */
+}
+
+.home-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 0 40px;
+  flex-wrap: nowrap; /* 줄바꿈 방지 */
+  overflow-x: auto; /* 작은 화면에서도 스크롤 */
+}
+
+.date-inputs input[type="date"] {
+  padding: 5px 10px;
+  margin-right: 10px;
+}
+
+.range-buttons {
+  display: flex;
+  gap: 10px;
+  white-space: nowrap; /*  줄바꿈 방지 */
+}
+
+.range-buttons button {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: none;
+  background-color: #f1f1f1;
+  color: #333;
+  pointer-events: auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  color: #555;
+  margin-left: auto; /* 오른쪽 정렬 고정 */
+  padding-left: 20px; /* 왼쪽 여백 추가 */
+  padding-right: 20px; /* 오른쪽 여백 */
+  white-space: nowrap; /*  줄바꿈 방지 */
+}
+
+/* 콘텐츠 카드 공통 */
+.dashboard .row {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0;
+}
+
+.card {
+  background: white;
+  width: 45%;
+  height: 300px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 0 20px;
+}
+
+/* 분석 카드 */
+.analysis-card {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  padding: 0;
+}
+
+.analysis-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scale(0.8);
+  border-radius: 10px;
+}
+
+/* 카드 위 제목 */
+.title-overlay {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  color: #415686;
+  padding: 6px 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+/* hover 설명 영역 */
+.hover-description {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+  transition: opacity 0.3s ease;
+  box-sizing: border-box;
+  overflow: hidden;
+  word-break: keep-all;
+  font-family: "GmarketLight", sans-serif;
+  font-weight: 300;
+}
+
+.analysis-card:hover .hover-description {
+  opacity: 1;
+}
