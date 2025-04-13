@@ -115,7 +115,10 @@ public class FetchVideoCommentService {
                             // HTML 태그 제거
                             String text = Jsoup.parse(rawText).text();  // ← 이 부분 추가
 
-                            accumulator.add(new VideoCommentDTO(text, likeCount, publishedAt));
+                            // 댓글 공백 제거
+                            if (text != null && !text.trim().isEmpty()) {
+                                accumulator.add(new VideoCommentDTO(text, likeCount, publishedAt));
+                            }
 
                         }
                     }
