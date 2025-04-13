@@ -30,12 +30,13 @@ public class UserServiceTest {
     public void 회원가입() throws Exception {
         //given
         User user = new User();
-        user.setName("dabin");
+        user.setName("kmh");
         user.setEmail("db@naver.com");
         user.setPassword("dabin1234");
-        user.setChannelName("워크맨-Workman");
+        user.setChannelName("연예 뒤통령이진호");
         user.setGender("여");
         user.setLoginId("dabin11");
+        user.setNationality("kr");
 
         //when
         String channelName = user.getChannelName();

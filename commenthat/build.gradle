@@ -47,6 +47,10 @@ dependencies {
 	//Spring Cloud Gateway: Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider 에러 해결
 	runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.118.Final:osx-aarch_64")
 
+	// 댓글에서 태그 제거
+	implementation 'org.jsoup:jsoup:1.17.2'
+
+
 }
 
 tasks.named('test') {

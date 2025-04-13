@@ -90,6 +90,7 @@ public class AutoProcessorController {
         return response;
     }
 
+    // 한 영상에 대한 댓글만 가져옴
     //http://localhost:8080/fetch-video-comment?videoId=34
     @GetMapping("/fetch-video-comment")
     //    @Scheduled(cron = "0 0 12 * * ?") // 매일 12시에 실행
@@ -100,6 +101,7 @@ public class AutoProcessorController {
         response.put("message", "success fetchVideoComment");
         return response;
     }
+
 
     //http://localhost:8080/fetch-video-comment-all?userId=2
     @GetMapping("/fetch-video-comment-all")

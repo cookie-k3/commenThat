@@ -225,7 +225,7 @@ public class FetchVideoService {
                         .path("/videos")
                         .queryParam("key", apiKey)
                         .queryParam("id", ids)
-                        .queryParam("part", "snippet,contentDetails") // ✅ duration 포함
+                        .queryParam("part", "snippet,contentDetails") // duration 포함
                         .build())
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
