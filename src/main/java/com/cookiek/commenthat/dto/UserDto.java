@@ -14,6 +14,8 @@ import lombok.*;
 @Builder
 public class UserDto {
 
+    private Long userId;
+
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "아이디는 영문 또는 영문+숫자만 가능합니다.")
     @NotBlank(message = "아이디는 필수 항목입니다.")
     private String loginId;

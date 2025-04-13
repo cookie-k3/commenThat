@@ -3,7 +3,7 @@ package com.cookiek.commenthat.service;
 import com.cookiek.commenthat.domain.User;
 import com.cookiek.commenthat.dto.LoginRequestDto;
 import com.cookiek.commenthat.dto.UserDto;
-import com.cookiek.commenthat.repository.UserRepository;
+import com.cookiek.commenthat.repository.UserInterface;
 import com.cookiek.commenthat.util.AES256Util;
 import com.cookiek.commenthat.util.SHA256Util;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +18,17 @@ import java.util.Optional;
 public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final UserRepository userRepository;
+    private final UserInterface userInterface;
 
     public String register(UserDto userDto) {
         try {
-            if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            if (userInterface.findByEmail(userDto.getEmail()).isPresent()) {
                 return "이미 사용 중인 이메일입니다.";
             }
-            if (userRepository.findByLoginId(userDto.getLoginId()).isPresent()) {
+            if (userInterface.findByLoginId(userDto.getLoginId()).isPresent()) {
                 return "이미 사용 중인 아이디입니다.";
             }
-            if (userRepository.findByChannelName(userDto.getChannelName()).isPresent()) {
+            if (userInterface.findByChannelName(userDto.getChannelName()).isPresent()) {
                 return "이미 사용 중인 채널명입니다.";
             }
 
@@ -48,7 +48,7 @@ public class UserService {
                     .gender(userDto.getGender())
                     .build();
 
-            userRepository.save(user);
+            userInterface.save(user);
             return "회원가입 완료!";
         } catch (Exception e) {
             logger.error("회원가입 중 오류 발생", e); // robust logging <-> printStackTrace(): 예외 발생 내용을 콘솔에만 출력
@@ -58,7 +58,7 @@ public class UserService {
     }
 
     public boolean login(LoginRequestDto loginDto) {
-        Optional<User> optionalUser = userRepository.findByLoginId(loginDto.getLoginId());
+        Optional<User> optionalUser = userInterface.findByLoginId(loginDto.getLoginId());
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();

@@ -2,7 +2,6 @@ package com.cookiek.commenthat.repository;
 
 
 import com.cookiek.commenthat.domain.ChannelInfo;
-import com.cookiek.commenthat.domain.User;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public class ChannelInfoRepository {
 
     private final EntityManager em;
-    private final UserRepository userRepository;
+    private final UserInterface userInterface;
 
     public void save(ChannelInfo channelInfo) {
         if (channelInfo.getId() == null) {
