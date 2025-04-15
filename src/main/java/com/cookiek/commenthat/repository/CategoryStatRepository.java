@@ -48,4 +48,23 @@ public class CategoryStatRepository {
                 counts.get(13).toString()  // other
         );
     }
+
+    public List<String> getCategoryCommentsByVideoId(Long videoId, Long categoryId) {
+        String jpql = "SELECT vc.comment FROM VideoComment vc WHERE vc.video.id = :videoId AND vc.category.id = :categoryId";
+        return em.createQuery(jpql, String.class)
+                .setParameter("videoId", videoId)
+                .setParameter("categoryId", categoryId)
+                .getResultList();
+    }
+
+    public String getCategorySummaryByVideoId(Long videoId, Long categoryId) {
+        return em.createQuery("""
+            SELECT cs.summary
+            FROM CategoryStat cs
+            WHERE cs.video.id = :videoId AND cs.category.id = :categoryId
+            """, String.class)
+                .setParameter("videoId", videoId)
+                .setParameter("categoryId", categoryId)
+                .getSingleResult();
+    }
 }

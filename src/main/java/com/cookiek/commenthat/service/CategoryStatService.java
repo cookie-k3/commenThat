@@ -5,6 +5,8 @@ import com.cookiek.commenthat.repository.CategoryStatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryStatService {
@@ -13,6 +15,14 @@ public class CategoryStatService {
 
     public CategoryStatCountDto getCategoryCountByVideoId(Long videoId) {
         return categoryStatRepository.getCategoryStatCountByVideoId(videoId);
+    }
+
+    public List<String> getComments(Long video, Long category) {
+        return categoryStatRepository.getCategoryCommentsByVideoId(video, category);
+    }
+
+    public String getSummary(Long video, Long category) {
+        return categoryStatRepository.getCategorySummaryByVideoId(video, category);
     }
 
 
