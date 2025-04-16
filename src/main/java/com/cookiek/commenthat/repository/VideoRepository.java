@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class VideoRepository {
 
-    private EntityManager em;
+    private final EntityManager em;
 
     public Long getRecentVideoId(Long userId) {
         return em.createQuery("""

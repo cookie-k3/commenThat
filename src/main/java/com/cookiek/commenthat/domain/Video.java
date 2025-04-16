@@ -46,5 +46,8 @@ public class Video {
 
     @OneToMany(mappedBy = "video")
     private List<CategoryStat> categoryStats = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "video")
+//    private List<SentiStat> sentiStats = new ArrayList<>();
 }
 

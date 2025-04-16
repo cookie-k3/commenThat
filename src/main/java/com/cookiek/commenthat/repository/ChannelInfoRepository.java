@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 public class ChannelInfoRepository {
 
     private final EntityManager em;
-    private final UserInterface userInterface;
 
     public void save(ChannelInfo channelInfo) {
         if (channelInfo.getId() == null) {

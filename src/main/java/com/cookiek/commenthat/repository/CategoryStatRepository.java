@@ -7,29 +7,37 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 public class CategoryStatRepository {
 
-    private EntityManager em;
+    private final EntityManager em;
 
     public CategoryStatCountDto getCategoryStatCountByVideoId(Long videoId) {
-        List<Long> counts = em.createQuery("""
-            SELECT cs.count
+        List<Long> counts = new ArrayList<>(Collections.nCopies(14, 0L)); // 길이 14, 0으로 초기화
+
+        List<Object[]> results = em.createQuery("""
+            SELECT cs.category.id, cs.count
             FROM CategoryStat cs
             WHERE cs.video.id = :videoId
-            ORDER BY cs.category.id ASC
-            """, Long.class)
+            """, Object[].class)
                 .setParameter("videoId", videoId)
                 .getResultList();
 
+        for (Object[] row : results) {
+            Long categoryId = (Long) row[0];
+            Long count = (Long) row[1];
 
-        // 리스트 길이 검증 (필수: 14개여야 함)
-        if (counts.size() != 14) {
-            throw new IllegalStateException("category_stat 테이블의 데이터 수가 15개가 아닙니다. 현재 개수: " + counts.size());
+            if (categoryId != null && categoryId >= 1 && categoryId <= 14) {
+                int index = categoryId.intValue() - 1; // categoryId 1 → index 0
+                counts.set(index, count);
+            }
         }
+
 
         return new CategoryStatCountDto(
                 counts.get(0).toString(),  // joy
