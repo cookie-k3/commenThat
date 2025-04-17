@@ -2,6 +2,7 @@ package com.cookiek.commenthat.domain;
 
 
 import com.cookiek.commenthat.service.UserService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

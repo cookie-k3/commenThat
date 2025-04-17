@@ -26,12 +26,13 @@ public class UserController {
             return ResponseEntity.badRequest().body(ApiResponse.fail(result));
         }
     }
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@Valid @RequestBody LoginRequestDto loginDto) {
-        boolean isSuccess = userService.login(loginDto);
 
-        if (isSuccess) {
-            return ResponseEntity.ok(ApiResponse.success("로그인 성공!", null));
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<UserDto>> login(@Valid @RequestBody LoginRequestDto loginDto) {
+        UserDto userInfo = userService.loginWithUserInfo(loginDto); // 사용자 정보 반환
+
+        if (userInfo != null) {
+            return ResponseEntity.ok(ApiResponse.success("로그인 성공!", userInfo));
         } else {
             return ResponseEntity.status(401).body(ApiResponse.fail("아이디 또는 비밀번호가 올바르지 않습니다."));
         }
