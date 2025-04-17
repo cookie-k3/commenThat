@@ -24,13 +24,12 @@ function App() {
         <Route path="/analysis_center" element={<AnalysisCenter />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Notfound />} />
-        <Route path="/" element={<Home />} />
         <Route path="/subscribers" element={<Subscriber />} />
         <Route path="/views" element={<View />} />
         <Route path="/category" element={<Category />} />
         <Route path="/sentiment" element={<Sentiment />} />
         <Route path="/recommend" element={<ContentRecommend />} />
+        <Route path="*" element={<Notfound />} />
       </Routes>
     </AuthProvider>
   );

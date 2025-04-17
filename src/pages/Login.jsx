@@ -26,11 +26,15 @@ const Login = () => {
           password,
         }
       );
+      console.log("전체 응답 구조 확인:", response.data);
 
       // 성공 여부 확인
       if (response.data.success) {
         alert(response.data.message); // "로그인 성공!"
-        login({ loginId }); // Context에 로그인 상태 저장
+
+        const userInfo = response.data.data; // 서버에서 받은 사용자 정보 전체 (loginId, userId 등)
+        console.log("로그인 사용자 정보:", userInfo); // 확인용 콘솔
+        login(userInfo); // Context에 저userInfo장
         navigate("/home"); // 홈으로 이동
       } else {
         alert(response.data.message); // ex) "아이디 또는 비밀번호가 올바르지 않습니다."

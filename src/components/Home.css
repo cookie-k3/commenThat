@@ -124,25 +124,45 @@ white-space: nowrap; /* 내부 텍스트 줄바꿈 방지 */
 .dashboard .row {
   display: flex;
   justify-content: space-between;
-  margin: 30px 0;
+  margin: 10px 0;
 }
 
 .card {
   background: white;
   width: 45%;
-  height: 300px;
+  height: 500px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   padding: 20px;
   margin: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column; /* 위 아래 배치 */
 }
 
 .card.clickable {
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0 2s ease;
 }
 
 .card.clickable:hover {
   transform: translateY(-10px);
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
 }
+.card h3 {
+  margin-bottom: 15px;
+  /* margin: 0 0 10px 0; 위쪽 여백 제거, 아래만 살짝 */
+  font-size: 18px;
+  font-family: "GmarketBold";
+}
+
+.chart-wrapper {
+  flex: 1;
+  width: 100%;
+}
+
+/* .chart-wrapper {
+  flex: 1; /* 남은 영역을 차트가 채움 */
+/* width: 100%; */
+/* height: 250px; card 높이 - h3 영역 고려한 값 */
+/* } */

@@ -1,0 +1,83 @@
+.category-section {
+  padding: 20px;
+}
+
+.category-chart-rank {
+  display: flex;
+  gap: 40px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pie-chart-box {
+  width: 500px;
+  height: 500px;
+}
+
+.category-rank-box {
+  flex: 1;
+}
+
+.category-rank {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-rank li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-family: "GmarketMedium";
+}
+
+.rank-num {
+  font-weight: bold;
+  color: #415686;
+  margin-right: 8px;
+}
+
+.rank-label {
+  flex: 1;
+  margin-left: 8px;
+}
+
+.category-rank button {
+  background-color: #415686;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.category-rank button:hover {
+  background-color: #2d3e60;
+}
+
+.category-detail {
+  margin-top: 40px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.summary-box {
+  background: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid #415686;
+  font-family: "GmarketLight";
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+}
+
+.comment-list li {
+  margin-bottom: 8px;
+  font-size: 14px;
+}

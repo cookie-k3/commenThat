@@ -1,0 +1,71 @@
+.home-container {
+  display: flex;
+  height: 100vh;
+  background-color: whitesmoke;
+}
+
+.home-main {
+  flex: 1;
+  padding: 0 40px;
+  overflow-x: hidden;
+}
+
+.home-topbar-wrapper {
+  background-color: white;
+  width: calc(100% + 80px);
+  margin: 0 -40px;
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
+
+.home-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  width: 100%;
+  gap: 30px;
+}
+
+.date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.range-buttons {
+  display: flex;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  color: #555;
+  margin-left: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  white-space: nowrap;
+  font-family: "GmarketMedium";
+}
+
+/* 그래프 박스 - 흰 배경 */
+.subscriber-container {
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  margin: 30px;
+  flex: 1;
+}
+
+.subscriber-container h2 {
+  font-family: "GmarketBold";
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-align: center;
+}
