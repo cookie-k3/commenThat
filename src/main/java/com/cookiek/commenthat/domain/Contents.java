@@ -38,8 +38,11 @@ public class Contents {
     @Column(name = "topic_rec", columnDefinition = "TEXT")
     private String topicRec;
 
-    @OneToMany(mappedBy = "contents")
-    private List<Reference> references = new ArrayList<>();
+    private String topic;
+
+    @Lob
+    @Column(name = "urls", columnDefinition = "TEXT")
+    private String urls;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")

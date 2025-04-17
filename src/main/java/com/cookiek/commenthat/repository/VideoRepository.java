@@ -1,8 +1,11 @@
 package com.cookiek.commenthat.repository;
 
+import com.cookiek.commenthat.dto.VideoDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,6 +23,19 @@ public class VideoRepository {
                 .setParameter("userId", userId)
                 .setMaxResults(1)  // 가장 최근 1개만
                 .getSingleResult();
+    }
+
+    public List<VideoDto> getVideoList(Long userId) {
+
+        return em.createQuery("""
+            SELECT new com.cookiek.commenthat.dto.VideoDto(v.id, v.title)
+            FROM Video v
+            WHERE v.user.id = :userId
+            ORDER BY v.date DESC
+            """, VideoDto.class)
+                .setParameter("userId", userId)
+                .getResultList();
+
     }
 
 }

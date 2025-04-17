@@ -1,11 +1,7 @@
 package com.cookiek.commenthat.controller;
 
-import com.cookiek.commenthat.dto.CategoryCommentsDto;
-import com.cookiek.commenthat.dto.CategoryStatCountDto;
-import com.cookiek.commenthat.dto.CategoryStatWithVideoIdDto;
-import com.cookiek.commenthat.dto.SentiStatWithVideoIdDto;
+import com.cookiek.commenthat.dto.*;
 import com.cookiek.commenthat.service.CategoryStatService;
-import com.cookiek.commenthat.service.SentiStatService;
 import com.cookiek.commenthat.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +22,7 @@ public class VideoCommentController {
     CategoryStatService categoryStatService;
     @Autowired
     VideoService videoService;
-    @Autowired
-    SentiStatService sentiStatService;
+
 
 
     // 모든 영상의 id와 제목을 반환해야하는지 확인하기!!
@@ -39,13 +34,14 @@ public class VideoCommentController {
 
     //http://localhost:8080/api/comments/category-chart-init?userId=2
     @GetMapping("/category-chart-init")
-    public ResponseEntity<CategoryStatWithVideoIdDto> getCategoryByUserId(@RequestParam Long userId) {
+    public ResponseEntity<CategoryStatWithVideoList> getCategoryByUserId(@RequestParam Long userId) {
 
         //최근 영상 선택
         Long videoId = videoService.getRecentVideoIdByUserId(userId);
         CategoryStatCountDto categoryStatCountDto = categoryStatService.getCategoryCountByVideoId(videoId);
+        List<VideoDto> videoDtoList = videoService.getVideoList(userId);
 
-        CategoryStatWithVideoIdDto response = new CategoryStatWithVideoIdDto(videoId, categoryStatCountDto);
+        CategoryStatWithVideoList response = new CategoryStatWithVideoList(videoDtoList, videoId, categoryStatCountDto);
 
         return ResponseEntity.ok(response);
 
@@ -84,6 +80,32 @@ public class VideoCommentController {
     /**
      * 긍부정
      * */
+
+//    @GetMapping("/senti-chart-init")
+//    public ResponseEntity<SentiStatWithVideoIdDto> getSentiByUserId(@RequestParam Long userId) {
+//
+//        //최근 영상 선택
+//        Long videoId = videoService.getRecentVideoIdByUserId(userId);
+//        List<Long> negativePositive = sentiStatService.getSentiCount(videoId);
+//
+//        SentiStatWithVideoIdDto response = new SentiStatWithVideoIdDto(videoId, negativePositive.get(0), negativePositive.get(1));
+//
+//        return ResponseEntity.ok(response);
+//
+//    }
+//
+//    @GetMapping("/senti-chart-videoid")
+//    public ResponseEntity<SentiStatWithVideoIdDto> getSentiByVideoId(@RequestParam Long videoId) {
+//
+//        List<Long> negativePositive = sentiStatService.getSentiCount(videoId);
+//
+//        SentiStatWithVideoIdDto response = new SentiStatWithVideoIdDto(videoId, negativePositive.get(0), negativePositive.get(1));
+//
+//        return ResponseEntity.ok(response);
+//
+//    }
+
+
 
 //    @GetMapping("/senti-chart-init")
 //    public ResponseEntity<SentiStatWithVideoIdDto> getSentiByUserId(@RequestParam Long userId) {

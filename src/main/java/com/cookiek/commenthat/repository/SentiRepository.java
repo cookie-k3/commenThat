@@ -9,7 +9,7 @@
 //
 //@Repository
 //@RequiredArgsConstructor
-//public class SentiStatRepository {
+//public class SentiRepository {
 //
 //    private final EntityManager em;
 //
