@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class CategoryStatWithVideoList {
+public class CategoryStatWithVideoListDto {
 
     private final List<VideoDto> videoDtoList;
     private final Long videoId;
