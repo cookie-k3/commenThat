@@ -1,0 +1,36 @@
+.category-rank {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.rank-left {
+  display: flex;
+  align-items: center;
+}
+
+.rank-circle {
+  background-color: #8cb5db;
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.rank-label {
+  font-size: 16px;
+  color: #6e6e6e;
+  font-weight: 500;
+}

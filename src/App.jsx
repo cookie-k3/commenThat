@@ -11,6 +11,7 @@ import View from "./pages/View";
 import Category from "./pages/Category";
 import Sentiment from "./pages/Sentiment";
 import ContentRecommend from "./pages/ContentRecommend";
+import CategoryDetail from "./pages/CategoryDetail";
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -30,6 +31,7 @@ function App() {
         <Route path="/sentiment" element={<Sentiment />} />
         <Route path="/recommend" element={<ContentRecommend />} />
         <Route path="*" element={<Notfound />} />
+        <Route path="/category/detail" element={<CategoryDetail />} />
       </Routes>
     </AuthProvider>
   );

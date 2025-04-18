@@ -1,0 +1,23 @@
+.video-select-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.video-select-bar select {
+  padding: 6px 12px;
+  font-size: 14px;
+  height: 36px; /* 높이 통일 */
+  border-radius: 6px;
+}
+
+.video-select-bar button {
+  background-color: #415686;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  height: 36px; /* 버튼 높이 통일 */
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}

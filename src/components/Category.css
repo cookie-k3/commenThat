@@ -1,83 +1,121 @@
 .category-section {
-  padding: 20px;
+  padding: 20px 40px 40px 40px; /* 좌우 여백 늘림 */
+  max-width: 1200px; /* 너무 좌우로 퍼지지 않도록 제한 */
+  margin: 0 auto; /* 중앙 정렬 */
 }
 
+/* 차트 + 순위 전체 레이아웃 */
 .category-chart-rank {
   display: flex;
-  gap: 40px;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center; /* 가운데 정렬로 카드 간 균형 */
   align-items: flex-start;
+  justify-content: space-between; /* 두 카드 좌우에 여유 있게 배치 */
+  align-items: flex-start;
+  margin-top: 30px; /* 상단과 간격 확보 */
 }
 
+/* 차트 카드 스타일 */
 .pie-chart-box {
-  width: 500px;
-  height: 500px;
+  width: 540px; /* 둘 다 똑같이 맞춤 */
+  height: 650px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box; /* 꼭 유지 */
 }
 
+/* 순위 카드 스타일 */
 .category-rank-box {
-  flex: 1;
+  width: 540px; /* 동일하게 설정 */
+  height: 650px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
+/* 순위 제목 */
+.category-rank-box h3 {
+  margin-bottom: 18px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* 순위 리스트 */
 .category-rank {
   list-style: none;
   padding: 0;
   margin: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .category-rank li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 14px;
   font-family: "GmarketMedium";
+  max-width: 800px; /* 중앙 정렬 제한 */
+  margin-left: auto;
+  margin-right: auto;
 }
 
+/* 순위 번호 */
 .rank-num {
   font-weight: bold;
   color: #415686;
-  margin-right: 8px;
+  font-size: 16px;
+  min-width: 24px;
+  text-align: right;
 }
 
+/*순위텍스트*/
 .rank-label {
-  flex: 1;
-  margin-left: 8px;
+  font-size: 15px;
+  white-space: nowrap;
+  /* overflow: hidden;
+  text-overflow: ellipsis; */
+  min-width: 80px;
+  /* text-align: left; */
+  padding-right: 40px;
 }
 
 .category-rank button {
   background-color: #415686;
   color: white;
   border: none;
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 4px 10px;
+  border-radius: 8px;
   font-size: 13px;
   cursor: pointer;
+  white-space: nowrap;
+  width: 80px; /* 고정 폭 추가 */
+  text-align: center;
 }
 
 .category-rank button:hover {
   background-color: #2d3e60;
 }
 
-.category-detail {
-  margin-top: 40px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-}
+/* 반응형 대응 */
+@media screen and (max-width: 1024px) {
+  .category-chart-rank {
+    flex-direction: column;
+  }
 
-.summary-box {
-  background: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-left: 4px solid #415686;
-  font-family: "GmarketLight";
-}
-
-.comment-list {
-  list-style: none;
-  padding: 0;
-}
-
-.comment-list li {
-  margin-bottom: 8px;
-  font-size: 14px;
+  .pie-chart-box,
+  .category-rank-box {
+    width: 100%;
+    height: auto;
+  }
 }

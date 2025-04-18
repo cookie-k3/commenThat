@@ -1,0 +1,75 @@
+.sentiment-section {
+  padding: 20px;
+}
+
+.sentiment-chart-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+select {
+  margin: 10px 0;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+/* src/components/sentiment.css */
+.sentiment-wordcloud-wrapper {
+  width: 100%;
+  max-width: 600px;
+  height: 300px; /* ★★★ 이 줄을 추가하세요 */
+  margin: 0 auto;
+}
+
+/* 전체 영역 정렬 */
+.sentiment-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* 좌우 카드 배치 */
+.sentiment-section .card-container {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* 각 카드 기본 스타일 */
+.sentiment-card {
+  flex: 1;
+  min-width: 320px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 제목 스타일 */
+.sentiment-card h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* 드롭다운 */
+.sentiment-section select {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: fit-content;
+  margin-bottom: 1rem;
+}
+
+/* 반응형 대응 */
+@media (max-width: 768px) {
+  .sentiment-section .card-container {
+    flex-direction: column;
+  }
+}

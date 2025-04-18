@@ -1,0 +1,116 @@
+.detail-main {
+  padding: 30px;
+  background-color: #f8f8f8;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ececec;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.detail-date-range span {
+  margin: 0 5px;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.detail-title h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+/* 요약 박스 */
+.summary-box {
+  background: #ffffff; /* 흰 배경 */
+  padding: 12px 16px; /* 기존보다 높이 줄임 */
+  border-left: 10px solid #383e77;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  position: sticky;
+  top: 20px; /* 상단 고정 위치 */
+  z-index: 10;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 요약 텍스트 */
+.summary-box p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #242424;
+}
+
+.summary-box h4 {
+  margin-top: 2;
+  margin-bottom: 10px;
+  font-size: 21px;
+  font-weight: bold;
+  color: #111111;
+  font-family: "GmarketMedium";
+}
+
+/* 댓글 리스트 전체 박스 */
+.comment-list-box {
+  background: #ffffff; /* 흰 배경 */
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+
+/* 댓글 리스트 제목 (박스 바깥에 고정되지 않음) */
+.comment-list-title {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 17px;
+  font-weight: bold;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+}
+
+/* 댓글 테이블 스크롤 영역 */
+.comment-table-wrapper {
+  max-height: 500px; /* 댓글 목록만 스크롤되도록 고정 높이 설정 */
+  overflow-y: auto;
+}
+
+/* 댓글 테이블 */
+.comment-table {
+  width: 100%;
+  background-color: #fff;
+  border-collapse: collapse;
+}
+
+.comment-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+/* #n */
+.comment-count {
+  width: 160px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* 댓글 텍스트 */
+.comment-text {
+  font-size: 15px;
+}
+
+.back-button {
+  background-color: #415686;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #2d3e60;
+}
