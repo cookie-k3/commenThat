@@ -1,11 +1,13 @@
 package com.cookiek.commenthat.repository;
 
+import com.cookiek.commenthat.dto.PositiveCommentDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,6 +35,23 @@ public class SentiRepository {
 
         return result;
     }
+
+    public List<PositiveCommentDto> findPositiveCommentsByVideoId(Long videoId) {
+        List<Object[]> results = em.createQuery("""
+            SELECT vc.comment, vc.likeCount
+            FROM VideoComment vc
+            WHERE vc.video.id = :videoId AND vc.isPositive = 1
+            """, Object[].class)
+                .setParameter("videoId", videoId)
+                .getResultList();
+
+        return results.stream()
+                .map(row -> new PositiveCommentDto((String) row[0], (Long) row[1]))
+                .collect(Collectors.toList());
+    }
+
+
+
 
 
 }

@@ -13,5 +13,6 @@ public class SentiWithVideoListDto {
     private final Long negativeCount;
     private final Long positiveCount;
     private final List<VideoDto>  videoDtoList;
+    private final List<PositiveCommentDto> positiveCommentDtos;
 
 }

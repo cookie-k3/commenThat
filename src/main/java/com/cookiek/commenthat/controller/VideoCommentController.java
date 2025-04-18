@@ -104,18 +104,25 @@ public class VideoCommentController {
         List<Long> negativePositive = sentiService.getSentiCount(videoId);
         List<VideoDto> videoDtoList = videoService.getVideoList(userId);
 
-        SentiWithVideoListDto response = new SentiWithVideoListDto(videoId, negativePositive.get(0), negativePositive.get(1), videoDtoList);
+        //긍부정 키워드
+        List<PositiveCommentDto> positiveCommentDtos = sentiService.getPositiveWord(videoId);
+
+        SentiWithVideoListDto response = new SentiWithVideoListDto(videoId, negativePositive.get(0), negativePositive.get(1), videoDtoList, positiveCommentDtos);
 
         return ResponseEntity.ok(response);
 
     }
 
+    //http://localhost:8080/api/comments/senti-chart-videoid?videoId=41
     @GetMapping("/senti-chart-videoid")
     public ResponseEntity<SentiWithVideoIdDto> getSentiByVideoId(@RequestParam Long videoId) {
 
         List<Long> negativePositive = sentiService.getSentiCount(videoId);
 
-        SentiWithVideoIdDto response = new SentiWithVideoIdDto(videoId, negativePositive.get(0), negativePositive.get(1));
+        //긍부정 키워드
+        List<PositiveCommentDto> positiveCommentDtos = sentiService.getPositiveWord(videoId);
+
+        SentiWithVideoIdDto response = new SentiWithVideoIdDto(videoId, negativePositive.get(0), negativePositive.get(1), positiveCommentDtos);
 
         return ResponseEntity.ok(response);
 

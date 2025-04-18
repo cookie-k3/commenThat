@@ -38,6 +38,8 @@ dependencies {
 	// Spring Boot에서 실제 구현체 제공 (Hibernate Validator) @Email 등을 해석하고 검사해주는 실제 "엔진"
 	//Hibernate ORM과는 별개로, 유효성 검사 엔진으로 동작함.
 	implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+
+	implementation 'org.openkoreantext:open-korean-text:2.1.0'
 }
 
 tasks.named('test') {
