@@ -30,6 +30,9 @@ public class User {
     @Column(name = "channel_name", nullable = false, unique = true)
     private String channelName; // 유튜브 채널명
 
+    @Column(name = "channel_img")
+    private String channel_img;
+
     @Column(nullable = false)
     private String email;       // 🔐 AES-256 암호화
 
