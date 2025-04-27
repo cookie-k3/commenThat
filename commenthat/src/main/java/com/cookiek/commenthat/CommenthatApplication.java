@@ -12,6 +12,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableAsync  //비동기 메서드 실행 활성화
+@EnableScheduling
 public class CommenthatApplication {
 
 	public static void main(String[] args) {

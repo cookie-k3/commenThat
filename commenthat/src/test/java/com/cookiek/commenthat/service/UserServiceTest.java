@@ -35,19 +35,39 @@ public class UserServiceTest {
         user.setPassword("dabin1234");
         user.setChannelName("연예 뒤통령이진호");
         user.setGender("여");
-        user.setLoginId("dabin11");
-        user.setNationality("kr");
+        user.setLoginId("dabin12");
+        user.setNationality("내국인");
 
         //when
         String channelName = user.getChannelName();
         String channelId = notSyncService.getChannelId(channelName);
+        String channelImg = notSyncService.getChannelImg(channelName);
 
         if (channelId == null) {
             throw new Exception("channelId null 오류");
         }
 
         user.setChannelId(channelId);
+        user.setChannel_img(channelImg);
         Long savedId = userService.join(user);
+
+        //then
+        em.flush();
+        assertEquals(user, userRepository.findById(savedId));
+
+    }
+
+    @Test
+    public void 회원_채널_이미지_수정() throws Exception {
+
+        User user = userService.findUserById(2L);
+
+        String channelName = user.getChannelName();
+        String channelImg = notSyncService.getChannelImg(channelName);
+
+        user.setChannel_img(channelImg);
+
+        Long savedId = userService.updateUser(user);
 
         //then
         em.flush();

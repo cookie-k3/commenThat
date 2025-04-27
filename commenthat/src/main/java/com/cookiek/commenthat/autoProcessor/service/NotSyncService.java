@@ -46,6 +46,44 @@ public class NotSyncService {
         return (String) id.get("channelId"); // 채널 ID 반환
     }
 
+    public String getChannelImg(String channelName) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(SEARCH_URL)
+                .queryParam("part", "snippet")
+                .queryParam("type", "channel")
+                .queryParam("q", channelName)
+                .queryParam("key", apiKey)
+                .build()
+                .toUri();
+
+        Map<String, Object> response = restTemplate.getForObject(uri, Map.class);
+        if (response == null || !response.containsKey("items")) return null;
+
+        List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
+        if (items.isEmpty()) return null;
+
+        Map<String, Object> firstItem = items.get(0);
+        Map<String, Object> snippet = (Map<String, Object>) firstItem.get("snippet");
+        if (snippet == null || !snippet.containsKey("thumbnails")) return null;
+
+        Map<String, Object> thumbnails = (Map<String, Object>) snippet.get("thumbnails");
+
+        String thumbnailUrl = null;
+        String[] qualityOrder = { "maxres", "high", "medium", "default" };
+
+        for (String quality : qualityOrder) {
+            if (thumbnails.get(quality) != null) {
+                thumbnailUrl = (String) ((Map<String, Object>) thumbnails.get(quality)).get("url");
+                break;
+            }
+        }
+
+        return thumbnailUrl; // 썸네일 URL 반환
+    }
+
+
+
     // 채널 설정에서 구독자 수를 숨기거나 정책상 노출이 제한되어서 1000 단위로 반올림된 숫자를 보여줌
     public Long getSubscriberCount(String channelId) {
         RestTemplate restTemplate = new RestTemplate();

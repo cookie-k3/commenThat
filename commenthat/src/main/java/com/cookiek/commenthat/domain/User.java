@@ -34,6 +34,9 @@ public class User {
     @Nullable
     private String channelId;
 
+    @Column(name = "channel_img")
+    private String channel_img;
+
     @Column(nullable = false)
     private String nationality;
 //    private String api;

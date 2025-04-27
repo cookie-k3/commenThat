@@ -37,6 +37,11 @@ public class UserRepository {
         return em.find(User.class, user_id);
     }
 
+    public List<User> findAllUser() {
+        return em.createQuery("SELECT u FROM User u", User.class)
+                .getResultList();
+    }
+
     public User findByIdWithChannelInfos(Long userId) {
         return em.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.channelInfos WHERE u.id = :userId", User.class)
                 .setParameter("userId", userId)

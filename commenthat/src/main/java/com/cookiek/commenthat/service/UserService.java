@@ -40,4 +40,19 @@ public class UserService {
         return user;
     }
 
+    @Transactional
+    public Long updateUser(User user) {
+        userRepository.save(user);
+        return user.getId();
+    }
+
+    @Transactional
+    public List<User> findAllUsers() {
+        List<User> users = userRepository.findAllUser();
+        if (users.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+        return users;
+    }
+
 }

@@ -114,6 +114,7 @@ public class FetchVideoService {
                             video.setDescription(dto.getDescription());
                             video.setThumbnail(dto.getThumbnail());
                             video.setDate(dto.getUploadDate()); // 이미 LocalDateTime 형태
+                            video.setVideoYoutubeId(dto.getVideoYoutubeId());
                             video.setUser(user);
                             videoInterface.save(video);
                         }

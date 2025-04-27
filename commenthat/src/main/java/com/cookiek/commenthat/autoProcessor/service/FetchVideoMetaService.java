@@ -101,9 +101,11 @@ public class FetchVideoMetaService {
                             return Mono.error(new RuntimeException("YouTube API 호출 실패: " + errorBody));
                         }))
                 .bodyToMono(Map.class)
-                .map(response -> {
+                .flatMap(response -> {
                     List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
-                    if (items == null || items.isEmpty()) return null;
+                    if (items == null || items.isEmpty()) {
+                        return Mono.empty(); // ✅ null 대신 Mono.empty()
+                    }
 
                     Map<String, Object> statistics = (Map<String, Object>) items.get(0).get("statistics");
 
@@ -111,7 +113,7 @@ public class FetchVideoMetaService {
                     long likeCount = Long.parseLong((String) statistics.getOrDefault("likeCount", "0"));
                     long commentCount = Long.parseLong((String) statistics.getOrDefault("commentCount", "0"));
 
-                    return new VideoMetaDTO(viewCount, likeCount, commentCount);
+                    return Mono.just(new VideoMetaDTO(viewCount, likeCount, commentCount));
                 });
     }
 
