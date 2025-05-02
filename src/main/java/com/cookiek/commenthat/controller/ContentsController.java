@@ -44,7 +44,7 @@ public class ContentsController {
     //추천 보고서 보여주는 코드
     //http://localhost:8080/api/contents/report?userId=2&contentsId=1
     @GetMapping("/report")
-    public ResponseEntity<ReportDto> getReport(@RequestParam Long userId, @RequestParam Long contentsId) {
+    public ResponseEntity<ReportDto> getReport(@RequestParam Long contentsId) {
 
         ReportDto response = contentsService.getReport(contentsId);
 
