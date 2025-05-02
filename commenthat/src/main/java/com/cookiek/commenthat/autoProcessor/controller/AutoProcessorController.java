@@ -31,6 +31,7 @@ public class AutoProcessorController {
     private final FetchVideoService fetchVideoService;
     private final FetchVideoMetaService fetchVideoMetaService;
     private final FetchVideoCommentService fetchVideoCommentService;
+    private final FetchTopicUrlsService fetchTopicUrlsService;
 
     /**
      * 스케쥴링 코드
@@ -205,7 +206,14 @@ public class AutoProcessorController {
         return response;
     }
 
-
+    //http://localhost:8080/fetch-topic-urls?contentsId=1
+    @GetMapping("fetch-topic-urls")
+    public Map<String, String> fetchTopicUrls(@RequestParam Long contentsId) {
+        fetchTopicUrlsService.updateUrlsAsync(contentsId);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "success fetchTopicUrls");
+        return response;
+    }
 
 
 
