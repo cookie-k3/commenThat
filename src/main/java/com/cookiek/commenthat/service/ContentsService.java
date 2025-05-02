@@ -1,5 +1,7 @@
 package com.cookiek.commenthat.service;
 
+import com.cookiek.commenthat.dto.ReportDto;
+import com.cookiek.commenthat.dto.TopicUrlsDto;
 import com.cookiek.commenthat.repository.ContentsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,14 @@ public class ContentsService {
 
     public List<String> getTopics(Long userId) {
         return contentsRepository.getTopicsByUserId(userId);
+    }
+
+    public List<TopicUrlsDto> getTopicUrls(Long userId) {
+        return contentsRepository.getLatestTopicUrlsByUserId(userId);
+    }
+
+    public ReportDto getReport(Long contentsId) {
+        return contentsRepository.getReportByContentsId(contentsId);
     }
 
 }
