@@ -1,13 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://commenthat-01.cz22kuakiyhc.ap-northeast-2.rds.amazonaws.com:3306/commenthat?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: commenthat
-    password: commenthat
-    #    url: jdbc:mysql://localhost:3306/dbproject?serverTimezone=UTC&characterEncoding=UTF-8
-#    url: jdbc:mysql://127.0.0.1:3306/commenthat?serverTimezone=UTC&characterEncoding=UTF-8
-#    username: root
-#    password: soeo19862!
+    url: jdbc:mysql://localhost:3307/commenthat?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: dabin1234
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect

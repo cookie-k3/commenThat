@@ -46,5 +46,18 @@ public class Video {
 
     @OneToMany(mappedBy = "video")
     private List<CategoryStat> categoryStats = new ArrayList<>();
+
+    //  JPA용 기본 생성자 (필수)
+    protected Video() {
+    }
+
+    //  id만 받는 생성자  Video video = new Video(videoId);
+    // -> saveSentiStat 편하게 쓰려고 만든 id-only 생성자
+
+    // id로 안 묶으면 videoRepository.findById(videoId)
+    // -> DB 조회가 한번 더 필요, 쿼리를 날려야 하는 번거로움
+    public Video(Long id) {
+        this.id = id;
+    }
 }
 

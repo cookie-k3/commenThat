@@ -1,7 +1,10 @@
 package com.cookiek.commenthat.service;
 
+import com.cookiek.commenthat.domain.SentiStat;
+import com.cookiek.commenthat.domain.Video;
 import com.cookiek.commenthat.dto.PositiveCommentDto;
 import com.cookiek.commenthat.repository.SentiRepository;
+import com.cookiek.commenthat.repository.SentiStatRepository;
 import lombok.RequiredArgsConstructor;
 import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
 import org.springframework.stereotype.Service;
@@ -18,12 +21,31 @@ import java.util.stream.Collectors;
 public class SentiService {
 
     private final SentiRepository sentiRepository;
+    private final SentiStatRepository sentiStatRepository;
 
+    // 긍/부정 댓글 수 조회 (DB에 저장된 결과가 있으면 가져오고, 없으면 계산 후 저장)
     public List<Long> getSentiCount(Long videoId) {
-        return sentiRepository.getSentiCountByVideoId(videoId);
+        List<SentiStat> stats = sentiStatRepository.findByVideoId(videoId);
+        if (!stats.isEmpty()) {
+            Long negative = stats.stream()
+                    .filter(s -> s.getIsPositive() == 0)
+                    .findFirst()
+                    .map(SentiStat::getCount)
+                    .orElse(0L);
+            Long positive = stats.stream()
+                    .filter(s -> s.getIsPositive() == 1)
+                    .findFirst()
+                    .map(SentiStat::getCount)
+                    .orElse(0L);
+            return List.of(negative, positive);
+        } else {
+            List<Long> result = sentiRepository.getSentiCountByVideoId(videoId);
+            saveSentiStat(videoId, result.get(0), result.get(1), null);
+            return result;
+        }
     }
 
-//    // like count 반영한 버전
+    // like count 반영한 버전
 //    public List<PositiveCommentDto> getPositiveWord(Long videoId) {
 //        List<PositiveCommentDto> positiveComments = sentiRepository.findPositiveCommentsByVideoId(videoId);
 //
@@ -46,8 +68,9 @@ public class SentiService {
 //                .collect(Collectors.toList());
 //    }
 
+    // like count 반영 안한 버전 (형태소 분석 후 빈도 기반)
 
-    // like count 반영 안한 버전
+    // 불용어 목록
     private static final Set<String> STOP_WORDS = Set.of(
             "수", "것", "하다", "되다", "이다", "보다", "없다", "않다", "해보다", "있다", "안", "또", "더", "게",
             "해", "시", "그렇다", "중", "많이", "예", "일", "자다", "후", "나", "못", "거", "좀", "건", "데",
@@ -63,12 +86,25 @@ public class SentiService {
             "지만", "아서", "다양하다", "싶다", "되어다", "가다", "들다", "진짜"
     );
 
+    // 제외할 품사 목록
     private static final Set<String> UNWANTED_POS = Set.of(
-            "Josa", "Determiner", "Conjunction", "PreEomi", "Eomi", "Suffix", "Punctuation", "Foreign",
-            "Pronoun", "Number", "KoreanParticle", "Alpha", "Adverb"
+            "Josa", "Determiner", "Conjunction", "PreEomi", "Eomi", "Suffix",
+            "Punctuation", "Foreign", "Pronoun", "Number", "KoreanParticle",
+            "Alpha", "Adverb"
     );
 
+    // 긍정 댓글 키워드 추출 (DB에 저장된 키워드가 있으면 가져오고, 없으면 새로 분석 후 저장)
     public List<PositiveCommentDto> getPositiveWord(Long videoId) {
+        List<SentiStat> stats = sentiStatRepository.findByVideoId(videoId);
+        Optional<SentiStat> positiveStat = stats.stream()
+                .filter(s -> s.getIsPositive() == 1 && s.getKeywords() != null)
+                .findFirst();
+
+        if (positiveStat.isPresent()) {
+            return parseJsonToDtoList(positiveStat.get().getKeywords());
+        }
+
+        // 긍정 댓글 가져오기
         List<PositiveCommentDto> positiveComments = sentiRepository.findPositiveCommentsByVideoId(videoId);
         Map<String, Long> wordCount = new HashMap<>();
 
@@ -77,31 +113,88 @@ public class SentiService {
 
             // 1. 정규화
             CharSequence normalized = OpenKoreanTextProcessorJava.normalize(comment);
-
             // 2. 형태소 분석
             Seq<KoreanToken> tokens = OpenKoreanTextProcessorJava.tokenize(normalized);
-
-            // 3. 필터링 + word 추출
+            // 3. 형태소 필터링 + 워드 추출
             List<String> words = OpenKoreanTextProcessorJava.tokensToJavaKoreanTokenList(tokens).stream()
                     .filter(token -> !UNWANTED_POS.contains(token.getPos().toString()))
-                    .map(token -> token.getText().replaceAll("[^가-힣a-zA-Z0-9]", "").trim()) // 특수문자 제거, 공백 제거
+                    .map(token -> token.getText().replaceAll("[^가-힣a-zA-Z0-9]", "").trim())
                     .filter(word -> word.length() > 1)
                     .filter(word -> !STOP_WORDS.contains(word))
                     .collect(Collectors.toList());
 
+            // 워드 카운트 집계
             for (String word : words) {
                 wordCount.put(word, wordCount.getOrDefault(word, 0L) + 1L);
             }
         }
 
-        return wordCount.entrySet().stream()
-                .filter(e -> e.getKey() != null && !e.getKey().isBlank()) // 안전 필터
+        // 빈도수 기준 내림차순 정렬
+        List<PositiveCommentDto> result = wordCount.entrySet().stream()
+                .filter(e -> e.getKey() != null && !e.getKey().isBlank())
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
                 .limit(300)
                 .map(e -> new PositiveCommentDto(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
+
+        // 분석 결과를 DB에 저장
+        savePositiveKeywords(videoId, result);
+
+        return result;
     }
 
+    // 부정/긍정 댓글 수 + 긍정 키워드를 DB에 저장
+    private void saveSentiStat(Long videoId, Long negativeCount, Long positiveCount, List<PositiveCommentDto> positiveCommentDtos) {
+        Video video = new Video(videoId);
 
+        SentiStat negative = new SentiStat();
+        negative.setVideo(video);
+        negative.setIsPositive(0);
+        negative.setCount(negativeCount);
+        sentiStatRepository.save(negative);
 
+        SentiStat positive = new SentiStat();
+        positive.setVideo(video);
+        positive.setIsPositive(1);
+        positive.setCount(positiveCount);
+        if (positiveCommentDtos != null) {
+            positive.setKeywords(convertDtoListToJson(positiveCommentDtos));
+        }
+        sentiStatRepository.save(positive);
+    }
+
+    // 긍정 키워드만 별도로 저장
+    private void savePositiveKeywords(Long videoId, List<PositiveCommentDto> keywords) {
+        List<SentiStat> stats = sentiStatRepository.findByVideoId(videoId);
+        for (SentiStat s : stats) {
+            if (s.getIsPositive() == 1) {
+                s.setKeywords(convertDtoListToJson(keywords));
+                sentiStatRepository.save(s);
+                break;
+            }
+        }
+    }
+
+    // PositiveCommentDto 리스트를 JSON 문자열로 변환
+    private String convertDtoListToJson(List<PositiveCommentDto> list) {
+        return "[" + list.stream()
+                .map(dto -> "{\"text\":\"" + dto.getText() + "\",\"value\":" + dto.getValue() + "}")
+                .collect(Collectors.joining(",")) + "]";
+    }
+
+    // JSON 문자열을 PositiveCommentDto 리스트로 변환
+    private List<PositiveCommentDto> parseJsonToDtoList(String json) {
+        if (json == null || json.isBlank()) return List.of();
+        json = json.replace("[", "").replace("]", "");
+        String[] items = json.split("\\},\\{");
+        List<PositiveCommentDto> result = new ArrayList<>();
+        for (String item : items) {
+            item = item.replace("{", "").replace("}", "");
+            String[] fields = item.split(",");
+            String text = fields[0].split(":")[1].replace("\"", "");
+            Long value = Long.parseLong(fields[1].split(":")[1]);
+            result.add(new PositiveCommentDto(text, value));
+        }
+        return result;
+    }
 }

@@ -31,7 +31,7 @@ public class User {
     private String channelName; // 유튜브 채널명
 
     @Column(name = "channel_img")
-    private String channel_img;
+    private String channelImg;
 
     @Column(nullable = false)
     private String email;       // 🔐 AES-256 암호화
