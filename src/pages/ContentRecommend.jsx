@@ -58,8 +58,8 @@ const ContentRecommend = () => {
               {/* 관련 URL 카드 */}
               <div className="url-list-card">
                 <ul className="video-url-list">
-                  {item.urls.map((url, i) => {
-                    const cleanUrl = url.replace(/"/g, ""); // url 큰따옴표 제거 처리
+                  {item.referenceDtos.map((ref, i) => {
+                    const cleanUrl = ref.url.replace(/"/g, ""); // url 큰따옴표 제거 처리
                     return (
                       <li key={i} className="video-url-item">
                         <span className="rank-circle">{i + 1}</span>
@@ -69,7 +69,11 @@ const ContentRecommend = () => {
                           rel="noopener noreferrer"
                           className="video-url-link"
                         >
-                          {cleanUrl}
+                          {/* 새롭게 title과 views 표시 */}
+                          <div className="video-url-title">{ref.title}</div>
+                          <div className="video-url-views">
+                            {ref.views} views
+                          </div>
                         </a>
                       </li>
                     );

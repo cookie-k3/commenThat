@@ -10,37 +10,29 @@ import { useAuth } from "../context/AuthContext";
 // 범주 영어-한글 변환
 const categoryKeyMap = {
   joy: "즐거움",
-  sadness: "슬픔",
-  anger: "분노",
-  fear: "무서움",
-  happiness: "행복",
-  cheering: "응원",
-  concern: "걱정",
+  supportive: "응원",
+  suggestion: "요청",
+  hate: "혐오",
+  question: "질문",
+  praise: "칭찬",
   sympathy: "공감",
   congratulations: "축하",
-  question: "질문",
-  suggestion: "요청",
-  praise: "칭찬",
-  hate: "혐오",
+  concern: "걱정",
   other: "기타",
 };
 
 // 범주 영어 → ID 매핑
 const categoryIdMap = {
   joy: 1,
-  sadness: 2,
-  anger: 3,
-  fear: 4,
-  happiness: 5,
-  cheering: 6,
-  concern: 7,
-  sympathy: 8,
-  congratulations: 9,
-  question: 10,
-  suggestion: 11,
-  praise: 12,
-  hate: 13,
-  other: 14,
+  supportive: 2,
+  suggestion: 3,
+  hate: 4,
+  question: 5,
+  praise: 6,
+  sympathy: 7,
+  congratulations: 8,
+  concern: 9,
+  other: 10,
 };
 
 const COLORS = [
@@ -128,10 +120,11 @@ const Category = () => {
       setVideoId(res.data.videoId); // 현재 선택된 영상 ID 저장
       setCategoryStats(res.data.statCountDto);
 
-      // 상위 8개 범주 추출
+      // 상위 10개 범주 추출 count가 0인 범주는 거름
       const sorted = Object.entries(res.data.statCountDto)
+        .filter(([_, value]) => Number(value) > 0) // ← 실제 값이 있는 범주만
         .sort((a, b) => Number(b[1]) - Number(a[1]))
-        .slice(0, 8);
+        .slice(0, 10);
       setTopCategories(sorted);
     } catch (e) {
       alert("범주 데이터 로딩 실패");
