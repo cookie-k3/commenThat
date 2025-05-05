@@ -40,12 +40,15 @@ public class Contents {
 
     private String topic;
 
-    @Lob
-    @Column(name = "urls", columnDefinition = "TEXT")
-    private String urls;
+//    @Lob
+//    @Column(name = "urls", columnDefinition = "TEXT")
+//    private String urls;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "contents", cascade = CascadeType.ALL)
+    private List<Reference> references = new ArrayList<>();
 
 }

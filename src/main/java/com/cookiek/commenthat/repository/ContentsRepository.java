@@ -1,14 +1,18 @@
 package com.cookiek.commenthat.repository;
 
+import com.cookiek.commenthat.domain.Contents;
+import com.cookiek.commenthat.dto.ReferenceDto;
 import com.cookiek.commenthat.dto.ReportDto;
 import com.cookiek.commenthat.dto.TopicUrlsDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,45 +33,55 @@ public class ContentsRepository {
     }
 
     public List<TopicUrlsDto> getLatestTopicUrlsByUserId(Long userId) {
-        // 최신 update_date를 먼저 구함
+        // 최신 update_date를 먼저 구함 -> 가장 최신 토픽들을 제공하기 위해
+        /* 1) 사용자의 가장 최근 update_date 구하기 */
         LocalDateTime latestUpdateDate = em.createQuery("""
-            SELECT MAX(c.updateDate)
-            FROM Contents c
-            WHERE c.user.id = :userId
-            """, LocalDateTime.class)
+        SELECT MAX(c.updateDate)
+        FROM Contents c
+        WHERE c.user.id = :userId
+        """, LocalDateTime.class)
                 .setParameter("userId", userId)
                 .getSingleResult();
 
-        // 최신 update_date에 해당하는 contents_id, topic, urls 가져오기
-        List<Object[]> results = em.createQuery("""
-            SELECT c.id, c.topic, c.urls
-            FROM Contents c
-            WHERE c.user.id = :userId
-              AND c.updateDate >= :latestDate
-            """, Object[].class)
-                .setParameter("userId", userId)
-                .setParameter("latestDate", latestUpdateDate.toLocalDate().atStartOfDay())
-                .getResultList();
-
-        List<TopicUrlsDto> dtoList = new ArrayList<>();
-
-        for (Object[] row : results) {
-            Long contentsId = (Long) row[0];
-            String topic = (String) row[1];
-            String urlsRaw = (String) row[2];
-
-            // 공백 제거 후 [와 ]도 제거
-            String cleaned = urlsRaw.replace(" ", "").replace("[", "").replace("]", "");
-
-            // 쉼표(,)로 분리 → 리스트로 변환
-            List<String> urlsList = Arrays.stream(cleaned.split(","))
-                    .filter(s -> !s.isEmpty())
-                    .collect(Collectors.toList());
-
-            dtoList.add(new TopicUrlsDto(contentsId, topic, urlsList));
+        if (latestUpdateDate == null) {          // 해당 사용자의 데이터가 없는 경우
+            return Collections.emptyList();
         }
 
-        return dtoList;
+
+        // 2) 날짜 범위 계산
+        LocalDate latestDate     = latestUpdateDate.toLocalDate();   // yyyy-MM-dd
+        LocalDateTime startOfDay   = latestDate.atStartOfDay();        // 00:00:00.000
+        LocalDateTime nextDayStart = startOfDay.plusDays(1);           // 다음 날 00:00
+
+        // 3) 범위 조건으로 Contents + Reference 로드
+        List<Contents> contentsList = em.createQuery("""
+        SELECT DISTINCT c
+        FROM Contents c
+        LEFT JOIN FETCH c.references r
+        WHERE c.user.id      = :userId
+          AND c.updateDate  >= :startOfDay
+          AND c.updateDate  <  :nextDayStart
+        """, Contents.class)
+                .setParameter("userId",       userId)
+                .setParameter("startOfDay",   startOfDay)
+                .setParameter("nextDayStart", nextDayStart)
+                .getResultList();
+
+        /* 4) DTO 변환 */
+        return contentsList.stream()
+                .map(c -> new TopicUrlsDto(
+                        c.getId(),
+                        c.getTopic(),
+                        c.getReferences()
+                                .stream()
+                                .map(r -> new ReferenceDto(
+                                        r.getImg(),
+                                        r.getTitle(),
+                                        r.getUrl(),
+                                        r.getViews()))
+                                .toList()
+                ))
+                .toList();
     }
 
     public ReportDto getReportByContentsId(Long contentsId) {

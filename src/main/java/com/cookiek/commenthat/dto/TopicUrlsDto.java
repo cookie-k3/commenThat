@@ -11,5 +11,5 @@ public class TopicUrlsDto {
 
     private Long contentsId;
     private String topic;
-    private List<String> urls;
+    private List<ReferenceDto> referenceDtos;
 }
