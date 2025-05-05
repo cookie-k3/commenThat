@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { useNavigate, useLocation } from "react-router-dom"; // 🔄 location 추가
 import "../components/Category.css";
 import LeftHeader from "../components/LeftHeader";
-import VideoSelectBar from "../components/VideoSelectBar";
+import VideoSelectTopBar from "../components/VideoSelectTopBar";
 import { useAuth } from "../context/AuthContext";
 
 // 범주 영어-한글 변환
@@ -165,77 +165,113 @@ const Category = () => {
       <LeftHeader />
       <div className="home-main">
         {/* 영상 선택 바 */}
-        <VideoSelectBar
-          userId={user?.userId}
-          onVideoSelect={handleVideoSelect}
+        <VideoSelectTopBar
+          fetchUrl="http://localhost:8080/api/comments/category-chart-init"
           initialVideoId={initialVideoId}
+          onVideoSelect={handleVideoSelect}
         />
 
         <div className="category-section">
           <div className="category-chart-rank">
             {/*  왼쪽: 원형 차트 카드 */}
-            <div className="pie-chart-box">
-              <h3>댓글 범주화</h3>
+            <div
+              style={{
+                flex: 1,
+                minWidth: "300px",
+                background: "white",
+                borderRadius: "12px",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+                padding: "1.5rem",
+                minHeight: "600px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <h3 style={{ marginBottom: "1rem", textAlign: "left" }}>
+                댓글 범주화
+              </h3>
 
-              {/* 기타 제외 체크박스 */}
-              <div style={{ marginBottom: "10px" }}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={excludeOther}
-                    onChange={() => setExcludeOther(!excludeOther)}
-                  />{" "}
-                  기타 제외해서 보기
-                </label>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {/* 기타 제외 체크박스 */}
+                <div style={{ marginBottom: "10px" }}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={excludeOther}
+                      onChange={() => setExcludeOther(!excludeOther)}
+                    />{" "}
+                    기타 제외해서 보기
+                  </label>
+                </div>
+
+                <PieChart width={510} height={500}>
+                  <Pie
+                    data={filteredPieData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={150}
+                    dataKey="value"
+                    // 상위 3개만 작대기 표시
+                    labelLine={(entry) => top3Keys.includes(entry.rawKey)}
+                    // 상위 3개만 라벨 표시, 직접 작대기와 함께 그려줌
+                    label={(props) =>
+                      renderCustomizedLabel({ ...props, top3Keys })
+                    }
+                  >
+                    {filteredPieData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          COLORS[
+                            Object.keys(categoryKeyMap).indexOf(entry.rawKey) %
+                              COLORS.length
+                          ]
+                        }
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name) => {
+                      const count = value;
+                      const percent = (
+                        (count /
+                          filteredPieData.reduce(
+                            (acc, cur) => acc + cur.value,
+                            0
+                          )) *
+                        100
+                      ).toFixed(0);
+                      return [`${percent}% (${count}개)`, name];
+                    }}
+                  />
+                  <Legend />
+                </PieChart>
               </div>
-
-              <PieChart width={500} height={500}>
-                <Pie
-                  data={filteredPieData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={150}
-                  dataKey="value"
-                  // 상위 3개만 작대기 표시
-                  labelLine={(entry) => top3Keys.includes(entry.rawKey)}
-                  // 상위 3개만 라벨 표시, 직접 작대기와 함께 그려줌
-                  label={(props) =>
-                    renderCustomizedLabel({ ...props, top3Keys })
-                  }
-                >
-                  {filteredPieData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={
-                        COLORS[
-                          Object.keys(categoryKeyMap).indexOf(entry.rawKey) %
-                            COLORS.length
-                        ]
-                      }
-                    />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value, name) => {
-                    const count = value;
-                    const percent = (
-                      (count /
-                        filteredPieData.reduce(
-                          (acc, cur) => acc + cur.value,
-                          0
-                        )) *
-                      100
-                    ).toFixed(0);
-                    return [`${percent}% (${count}개)`, name];
-                  }}
-                />
-                <Legend />
-              </PieChart>
             </div>
 
             {/* 오른쪽: 범주 순위 카드 */}
-            <div className="category-rank-box">
-              <h3>댓글 범주화 순위</h3>
+            <div
+              style={{
+                flex: 1,
+                minWidth: "300px",
+                background: "white",
+                borderRadius: "12px",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+                padding: "1rem",
+                minHeight: "620px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <h3 style={{ marginBottom: "80px" }}>댓글 범주화 순위</h3>
               <ul className="category-rank">
                 {topCategories.map(([key, value], idx) => (
                   <li key={key}>

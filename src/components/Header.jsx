@@ -26,6 +26,10 @@ const Header = () => {
           >
             분석센터
           </span>
+
+          <span onClick={() => navigate("/reputation")} className="nav-item">
+            평판 분석
+          </span>
         </nav>
 
         {/* 우측: 로그인 상태에 따라 변경 */}

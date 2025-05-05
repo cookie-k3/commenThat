@@ -13,6 +13,7 @@ import LeftHeader from "../components/LeftHeader";
 import ReactECharts from "echarts-for-react";
 import "echarts-wordcloud"; // 워드클라우드 플러그인
 import "../components/sentiment.css";
+import VideoSelectTopBar from "../components/VideoSelectTopBar";
 
 const COLORS = ["#A8CFF2", "#ECB4D6"]; // 부정: 연하늘, 긍정: 연보라
 const WORD_CLOUD_COLORS = [
@@ -126,24 +127,23 @@ const Sentiment = () => {
   return (
     <div className="home-container">
       <LeftHeader />
-      <div className="home-main" style={{ padding: "2rem" }}>
-        <h3>감정 분석</h3>
-
+      <div className="home-main" style={{ padding: "0 2rem 2rem 2rem" }}>
         {/* 영상 선택 */}
-        <select
-          value={videoId || ""}
-          onChange={(e) => handleVideoChange(e.target.value)}
-          style={{ padding: "8px", marginBottom: "1rem" }}
-        >
-          {videoList.map((v) => (
-            <option key={v.videoId} value={v.videoId}>
-              {v.videoTitle}
-            </option>
-          ))}
-        </select>
+        <VideoSelectTopBar
+          fetchUrl="http://localhost:8080/api/comments/senti-chart-init"
+          initialVideoId={videoId}
+          onVideoSelect={(id) => handleVideoChange(id)}
+        />
 
         {/* 분석 결과 */}
-        <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "2rem",
+            flexWrap: "wrap",
+            marginTop: "2rem", // 추가된 여백
+          }}
+        >
           {/* 도넛 차트 카드 */}
           <div
             style={{

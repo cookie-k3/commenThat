@@ -1,0 +1,43 @@
+/* ContentRecommendReport.css */
+
+.report-wrapper {
+  padding: 30px 40px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  font-family: "Pretendard", sans-serif;
+  color: #333;
+}
+
+.report-title {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  font-family: "GmarketMideum", sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  padding: 10px 24px;
+  margin-bottom: 32px;
+}
+
+.report-section {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.06);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-family: "GmarketMideum", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.section-content {
+  font-family: "GmarketLight", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-line;
+}

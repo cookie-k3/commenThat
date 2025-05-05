@@ -11,15 +11,16 @@ import category from "../assets/category.png";
 
 const LeftHeader = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  // const { logout } = useAuth();
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm("로그아웃하시겠습니까?");
-    if (confirmLogout) {
-      logout();
-      navigate("/");
-    }
-  };
+  // const handleLogout = () => {
+  //   const confirmLogout = window.confirm("로그아웃하시겠습니까?");
+  //   if (confirmLogout) {
+  //     logout(); // user 상태 초기화 및 localStorage에서 user 삭제
+  //     localStorage.setItem("fromLogout", "true"); // 로그아웃 여부 저장 (Home에서 confirm 방지용)
+  //     navigate("/"); // 메인 페이지로 이동
+  //   }
+  // };
 
   return (
     <div className="left-header">
@@ -27,7 +28,7 @@ const LeftHeader = () => {
         src={logo}
         alt="Logo"
         className="side-logo"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/home")}
       />
 
       <div className="menu-wrapper">

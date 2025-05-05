@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Notfound from "./pages/Notfound";
 import Subscriber from "./pages/Subscriber";
+import Reputation from "./pages/Reputation";
 import View from "./pages/View";
 import Category from "./pages/Category";
 import Sentiment from "./pages/Sentiment";
@@ -14,6 +15,7 @@ import ContentRecommend from "./pages/ContentRecommend";
 import CategoryDetail from "./pages/CategoryDetail";
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import ContentRecommendReport from "./pages/ContentRecommendReport";
 
 function App() {
   return (
@@ -32,6 +34,11 @@ function App() {
         <Route path="/recommend" element={<ContentRecommend />} />
         <Route path="*" element={<Notfound />} />
         <Route path="/category/detail" element={<CategoryDetail />} />
+        <Route path="/reputation" element={<Reputation />} />
+        <Route
+          path="/recommend/report/:contentsId"
+          element={<ContentRecommendReport />}
+        />
       </Routes>
     </AuthProvider>
   );

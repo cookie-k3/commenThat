@@ -1,0 +1,201 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 전체 페이지 배경 설정 */
+.reputation-page {
+  min-height: 100vh;
+  background-color: white;
+  padding-top: 100px;
+}
+
+/* 메인 콘텐츠 컨테이너 */
+.reputation-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+/* 이달의 채널 영역 */
+.channel-of-month-section {
+  display: flex;
+  align-items: center;
+  padding: 30px;
+  background-color: #f0f4ff;
+  border-radius: 20px;
+  margin-bottom: 40px;
+}
+
+/* 이달의 채널 텍스트 */
+.channel-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 30px;
+  display: flex;
+  align-items: center;
+}
+
+/* 텍스트와 채널 정보 사이 구분선 */
+.channel-divider {
+  border-left: 2px solid #ccc;
+  height: 80px;
+  margin: 0 30px;
+}
+
+/* 채널 정보 */
+.channel-details {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative; /* 왕관 위치 기준 */
+}
+
+.channel-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.channel-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* 왕관 아이콘 위치 조정 */
+.crown-icon {
+  position: absolute;
+  top: -10px;
+  left: 50px;
+  font-size: 35px;
+}
+
+/* 랭킹 카드들 */
+.ranking-section {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+/* 각 카드 스타일 */
+.ranking-card {
+  flex: 1;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+  box-sizing: border-box;
+}
+
+/* 1등 사용자 표시 영역 */
+.ranking-top-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+  position: relative; /* 왕관 위치 기준 */
+  animation: sparkle 1.5s infinite alternate; /* 애니메이션 추가 */
+}
+
+.ranking-top-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.ranking-top-name {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+/* 왕관 아이콘 위치 */
+.ranking-crown {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 35px;
+}
+
+/* 랭킹 리스트 고정 높이 + 스크롤 */
+.ranking-list {
+  overflow-y: auto;
+  flex: 1;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+/* 랭킹 항목 */
+.ranking-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.rank-number {
+  width: 24px;
+  font-size: 16px;
+  text-align: center;
+  font-weight: bold;
+  color: #444;
+  margin-right: 10px;
+}
+
+.profile-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.user-total {
+  font-size: 13px;
+  color: #666;
+}
+.crown-icon,
+.ranking-crown {
+  animation: crownBlink 1.5s infinite;
+}
+
+@keyframes crownBlink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* 애니메이션 효과 */
+/* @keyframes sparkle {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+} */

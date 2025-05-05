@@ -15,9 +15,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setUser(null);
+    setUser(null); // 로그인된 사용자 정보 초기화
     // navigate는 여기서 하지 말고 컴포넌트에서 해줄 것!
-    localStorage.removeItem("user"); //로그아웃 시 삭제
+    localStorage.removeItem("user"); //로그아웃 시 localStorage에서 사용자 정보 제거
   };
 
   //새로고침 시 복원

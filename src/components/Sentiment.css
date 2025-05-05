@@ -73,3 +73,7 @@ select {
     flex-direction: column;
   }
 }
+
+.home-main {
+  padding: 0 2rem 2rem 2rem; /* 위쪽 여백 제거 */
+}

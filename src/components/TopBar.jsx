@@ -2,7 +2,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "../components/Home.css";
+import "../components/TopBar.css";
 
 const TopBar = () => {
   const { user, logout } = useAuth();
@@ -10,12 +10,15 @@ const TopBar = () => {
 
   const handleLogout = () => {
     logout(); // 상태 초기화 + localStorage 제거
-    navigate("/"); // 메인 화면으로 이동
+    localStorage.setItem("fromLogout", "true"); // 로그아웃 여부 저장 (Home에서 confirm 방지용)
+    navigate("/"); // 메인 페이지로 이동
   };
+  //로그아웃 직전에 localStorage에 "fromLogout" 값을 "true"로 저장
+  //Home 페이지가 “로그아웃 직후인지” 판단하는 기준
 
   return (
-    <div className="home-topbar-wrapper">
-      <div className="home-topbar">
+    <div className="topbar-wrapper">
+      <div className="topbar">
         <div className="user-info">
           <span>{user?.loginId}</span>
           <span>|</span>

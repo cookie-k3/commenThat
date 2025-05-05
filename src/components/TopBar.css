@@ -1,0 +1,33 @@
+/* 최상단 바 전체 영역 */
+.topbar-wrapper {
+  /* width: 100%; */
+  width: calc(100% + 240px); /* 좌측 sidebar 넓이만큼 제외 */
+  margin-left: -240px; /* 좌측 sidebar 만큼 이동 */
+  background-color: white;
+  padding: 10px 40px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  justify-content: space-between; /* 오른쪽 끝까지 밀지 않음 */
+  align-items: center;
+}
+
+/* 내부 내용 정렬 */
+.topbar {
+  display: flex;
+  align-items: center;
+  width: 100%; /*  줄바꿈 방지 */
+}
+
+/* 유저 정보 스타일 */
+.user-info {
+  display: flex;
+  flex-direction: row; /* 수평 정렬 강제 */
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap; /* 줄바꿈 방지 */
+  margin-right: 50px; /* 너무 오른쪽으로 밀리는 것 방지 */
+}
