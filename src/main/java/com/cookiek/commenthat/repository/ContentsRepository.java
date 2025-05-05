@@ -11,10 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,7 +44,6 @@ public class ContentsRepository {
         if (latestUpdateDate == null) {          // 해당 사용자의 데이터가 없는 경우
             return Collections.emptyList();
         }
-
 
         // 2) 날짜 범위 계산
         LocalDate latestDate     = latestUpdateDate.toLocalDate();   // yyyy-MM-dd

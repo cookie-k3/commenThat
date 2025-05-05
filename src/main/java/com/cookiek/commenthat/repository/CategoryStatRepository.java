@@ -18,7 +18,8 @@ public class CategoryStatRepository {
     private final EntityManager em;
 
     public CategoryStatCountDto getCategoryStatCountByVideoId(Long videoId) {
-        List<Long> counts = new ArrayList<>(Collections.nCopies(14, 0L)); // 길이 14, 0으로 초기화
+        // 카테고리 수 10개로 변경 (기존: 14개)
+        List<Long> counts = new ArrayList<>(Collections.nCopies(10, 0L)); // 길이 10, 0으로 초기화
 
         List<Object[]> results = em.createQuery("""
             SELECT cs.category.id, cs.count
@@ -32,28 +33,25 @@ public class CategoryStatRepository {
             Long categoryId = (Long) row[0];
             Long count = (Long) row[1];
 
-            if (categoryId != null && categoryId >= 1 && categoryId <= 14) {
+            // 유효 범위 수정: 1~10
+            if (categoryId != null && categoryId >= 1 && categoryId <= 10) {
                 int index = categoryId.intValue() - 1; // categoryId 1 → index 0
                 counts.set(index, count);
             }
         }
 
-
+        // 10개 카테고리에 맞춰 매핑
         return new CategoryStatCountDto(
                 counts.get(0).toString(),  // joy
-                counts.get(1).toString(),  // sadness
-                counts.get(2).toString(),  // anger
-                counts.get(3).toString(),  // fear
-                counts.get(4).toString(),  // happiness
-                counts.get(5).toString(),  // cheering
-                counts.get(6).toString(),  // concern
-                counts.get(7).toString(),  // sympathy
-                counts.get(8).toString(),  // congratulations
-                counts.get(9).toString(),  // question
-                counts.get(10).toString(), // suggestion
-                counts.get(11).toString(), // praise
-                counts.get(12).toString(), // hate
-                counts.get(13).toString()  // other
+                counts.get(1).toString(),  // supportive
+                counts.get(2).toString(),  // suggestion
+                counts.get(3).toString(),  // hate
+                counts.get(4).toString(),  // question
+                counts.get(5).toString(),  // praise
+                counts.get(6).toString(),  // sympathy
+                counts.get(7).toString(),  // congratulations
+                counts.get(8).toString(),  // concern
+                counts.get(9).toString()   // other
         );
     }
 
