@@ -50,6 +50,8 @@ dependencies {
 	// 댓글에서 태그 제거
 	implementation 'org.jsoup:jsoup:1.17.2'
 
+	implementation 'org.openkoreantext:open-korean-text:2.1.0'
+
 
 }
 

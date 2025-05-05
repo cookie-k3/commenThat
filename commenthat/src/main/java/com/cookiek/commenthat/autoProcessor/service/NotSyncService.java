@@ -1,5 +1,9 @@
 package com.cookiek.commenthat.autoProcessor.service;
 
+import com.cookiek.commenthat.domain.Contents;
+import com.cookiek.commenthat.domain.User;
+import com.cookiek.commenthat.repository.ContentsInterface;
+import com.cookiek.commenthat.repository.UserInterface;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Slf4j
@@ -22,6 +27,11 @@ public class NotSyncService {
 
     private static final String SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
     private static final String CHANNEL_URL = "https://www.googleapis.com/youtube/v3/channels";
+
+    private final ContentsInterface contentsInterface;
+    private final UserInterface userInterface;
+
+
 
     public String getChannelId(String channelName) {
         RestTemplate restTemplate = new RestTemplate();
@@ -104,5 +114,6 @@ public class NotSyncService {
         Map<String, Object> statistics = (Map<String, Object>) items.get(0).get("statistics");
         return Long.parseLong((String) statistics.getOrDefault("subscriberCount", "0"));
     }
+
 
 }

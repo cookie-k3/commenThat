@@ -1,6 +1,7 @@
 package com.cookiek.commenthat.autoProcessor.controller;
 
 import com.cookiek.commenthat.autoProcessor.service.*;
+import com.cookiek.commenthat.domain.Contents;
 import com.cookiek.commenthat.domain.User;
 import com.cookiek.commenthat.domain.Video;
 import com.cookiek.commenthat.repository.UserInterface;
@@ -32,6 +33,7 @@ public class AutoProcessorController {
     private final FetchVideoMetaService fetchVideoMetaService;
     private final FetchVideoCommentService fetchVideoCommentService;
     private final FetchTopicUrlsService fetchTopicUrlsService;
+    private final SentiService sentiService;
 
     /**
      * 스케쥴링 코드
@@ -206,12 +208,22 @@ public class AutoProcessorController {
         return response;
     }
 
-    //http://localhost:8080/fetch-topic-urls?contentsId=1
+//    //http://localhost:8080/fetch-topic-urls?contentsId=1
     @GetMapping("fetch-topic-urls")
     public Map<String, String> fetchTopicUrls(@RequestParam Long contentsId) {
+
         fetchTopicUrlsService.updateUrlsAsync(contentsId);
         Map<String, String> response = new HashMap<>();
         response.put("message", "success fetchTopicUrls");
+        return response;
+    }
+
+    //http://localhost:8080/fetch-positive-comment?videoId=58
+    @GetMapping("fetch-positive-comment")
+    public Map<String, String> fetchPositiveComment(@RequestParam Long videoId) {
+        sentiService.getAndSavePositiveWords(videoId);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "success fetchPositiveComment");
         return response;
     }
 
