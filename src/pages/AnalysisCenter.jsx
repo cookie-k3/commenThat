@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "../components/Home.css";
-import "../components/Analysis.css";
+import "../components/AnalysisCenter.css";
 import LeftHeader from "../components/LeftHeader";
 
 import subImg from "../assets/sub_ex.png";

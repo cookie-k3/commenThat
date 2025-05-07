@@ -24,13 +24,12 @@ const VideoSelectTopBar = ({ fetchUrl, onVideoSelect, initialVideoId }) => {
       try {
         const res = await axios.get(`${fetchUrl}?userId=${user.userId}`);
 
-        // 추가 설명: API 응답 구조가 서비스마다 다르므로 유연하게 처리함
+        // API 응답 구조가 서비스마다 다르므로 유연하게 처리함
         // 예: res.data.videoDtoList 또는 res.data.data.videoDtoList 형태일 수 있음
         const raw = res?.data || {};
         const videoList = raw.videoDtoList || raw.data?.videoDtoList || [];
 
         console.log("받은 영상 목록:", videoList);
-
         setVideos(videoList);
 
         // defaultVideoId는 아래 우선순위에 따라 결정됨:

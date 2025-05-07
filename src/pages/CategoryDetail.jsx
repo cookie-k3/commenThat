@@ -8,19 +8,15 @@ import LeftHeader from "../components/LeftHeader";
 
 const categoryNameMap = {
   1: "즐거움",
-  2: "슬픔",
-  3: "분노",
-  4: "무서움",
-  5: "행복",
-  6: "응원",
-  7: "걱정",
-  8: "공감",
-  9: "축하",
-  10: "질문",
-  11: "요청",
-  12: "칭찬",
-  13: "혐오",
-  14: "기타",
+  2: "응원",
+  3: "요청",
+  4: "혐오",
+  5: "질문",
+  6: "칭찬",
+  7: "공감",
+  8: "축하",
+  9: "걱정",
+  10: "기타",
 };
 
 const CategoryDetail = () => {
@@ -55,7 +51,7 @@ const CategoryDetail = () => {
     <div className="home-container">
       <LeftHeader />
       <div className="home-main detail-main">
-        {/* 상단 뒤로가기 버튼, 제목 */}
+        {/* 뒤로가기 버튼, 제목 */}
         <div className="detail-header">
           <button
             onClick={() => navigate(`/category?videoId=${videoId}`)}

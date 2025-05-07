@@ -17,13 +17,12 @@ const ContentRecommendReport = () => {
         const res = await axios.get(
           `http://localhost:8080/api/contents/report?userId=${user.userId}&contentsId=${contentsId}`
         );
-        console.log("📦 API 응답:", res.data);
+        console.log("API 응답:", res.data);
         setReport(res.data);
       } catch (error) {
         console.error("추천 보고서를 불러오지 못했습니다.", error);
       }
     };
-
     if (user?.userId && contentsId) {
       fetchReport();
     }

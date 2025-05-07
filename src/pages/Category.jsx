@@ -111,7 +111,6 @@ const Category = () => {
   const [topCategories, setTopCategories] = useState([]);
   const [excludeOther, setExcludeOther] = useState(false);
 
-  // 영상 선택 시 범주 통계 로딩
   const handleVideoSelect = async (selectedId) => {
     try {
       const res = await axios.get(
@@ -120,9 +119,9 @@ const Category = () => {
       setVideoId(res.data.videoId); // 현재 선택된 영상 ID 저장
       setCategoryStats(res.data.statCountDto);
 
-      // 상위 10개 범주 추출 count가 0인 범주는 거름
+      // count가 0인 범주는 거름
       const sorted = Object.entries(res.data.statCountDto)
-        .filter(([_, value]) => Number(value) > 0) // ← 실제 값이 있는 범주만
+        .filter(([_, value]) => Number(value) > 0) // 실제 값이 있는 범주만
         .sort((a, b) => Number(b[1]) - Number(a[1]))
         .slice(0, 10);
       setTopCategories(sorted);
@@ -212,9 +211,9 @@ const Category = () => {
                     cy="50%"
                     outerRadius={150}
                     dataKey="value"
-                    // 상위 3개만 작대기 표시
+                    // 상위 3개 범주만 작대기 표시
                     labelLine={(entry) => top3Keys.includes(entry.rawKey)}
-                    // 상위 3개만 라벨 표시, 직접 작대기와 함께 그려줌
+                    // 상위 3개 범주만 작대기 표시
                     label={(props) =>
                       renderCustomizedLabel({ ...props, top3Keys })
                     }

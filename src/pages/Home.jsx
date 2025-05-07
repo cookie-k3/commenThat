@@ -345,30 +345,44 @@ const Home = () => {
                   onClick={() => navigate("/sentiment")}
                 >
                   {/* <p style={{ fontSize: "14px", marginBottom: "0.5rem" }}>
-                    긍부정 분석
-                  </p> */}
-                  <PieChart width={180} height={180}>
-                    <RePie
-                      data={sentimentData.map((d) => ({
-                        name: d.name,
-                        value: d.value,
-                      }))}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      dataKey="value"
-                      labelLine={false}
+    긍부정 분석
+  </p> */}
+                  {sentimentData.length === 0 ||
+                  sentimentData.every((d) => d.value === 0) ? ( // [수정] 조건 추가
+                    <div
+                      style={{
+                        height: "180px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
                     >
-                      {sentimentData.map((_, i) => (
-                        <Cell
-                          key={`senti-${i}`}
-                          fill={["#A8CFF2", "#ECB4D6"][i]}
-                        />
-                      ))}
-                    </RePie>
-                    <ReTooltip />
-                  </PieChart>
+                      <p style={{ color: "#999", fontSize: "14px" }}>
+                        데이터 없음
+                      </p>{" "}
+                      {/* 안내 문구 추가 */}
+                    </div>
+                  ) : (
+                    <PieChart width={180} height={180}>
+                      <RePie
+                        data={sentimentData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={80}
+                        dataKey="value"
+                        labelLine={false}
+                      >
+                        {sentimentData.map((_, i) => (
+                          <Cell
+                            key={`senti-${i}`}
+                            fill={["#A8CFF2", "#ECB4D6"][i % 2]} // [수정] 색상 매핑 안전하게 처리
+                          />
+                        ))}
+                      </RePie>
+                      <ReTooltip />
+                    </PieChart>
+                  )}
                   <p
                     style={{
                       fontSize: "14px",
