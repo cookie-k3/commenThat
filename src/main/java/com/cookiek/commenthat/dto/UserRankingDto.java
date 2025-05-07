@@ -9,5 +9,7 @@ public class UserRankingDto {
     private Long userId;
     private String loginId;
     private String channelImg;
+    private String channelName;
     private Long total;
+
 }

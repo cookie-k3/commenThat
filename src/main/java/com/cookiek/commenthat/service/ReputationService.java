@@ -35,7 +35,8 @@ public class ReputationService {
                         (Long) row[0],   // userId
                         (String) row[1], // loginId
                         (String) row[2], // channelImg
-                        (Long) row[3]    // positive count
+                        (String) row[3], // channelName
+                        (Long) row[4]    // total (positive count)
                 ))
                 .collect(Collectors.toList());
     }

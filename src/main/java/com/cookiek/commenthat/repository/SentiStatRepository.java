@@ -25,12 +25,12 @@ public interface SentiStatRepository extends JpaRepository<SentiStat, Long> {
      *   [3]: 긍정 댓글 합계(count)
      */
     @Query("""
-        SELECT v.user.userId, v.user.loginId, v.user.channelImg, SUM(s.count)
-        FROM SentiStat s
-        JOIN s.video v
-        WHERE s.isPositive = 1
-        GROUP BY v.user.userId, v.user.loginId, v.user.channelImg
-        ORDER BY SUM(s.count) DESC
-        """)
+    SELECT v.user.userId, v.user.loginId, v.user.channelImg, v.user.channelName, SUM(s.count)
+    FROM SentiStat s
+    JOIN s.video v
+    WHERE s.isPositive = 1
+    GROUP BY v.user.userId, v.user.loginId, v.user.channelImg, v.user.channelName
+    ORDER BY SUM(s.count) DESC
+""")
     List<Object[]> findTopUsersByPositiveComments();
 }

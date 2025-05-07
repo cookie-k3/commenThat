@@ -99,18 +99,34 @@ public class VideoCommentController {
     @GetMapping("/senti-chart-init")
     public ResponseEntity<SentiWithVideoListDto> getSentiByUserId(@RequestParam Long userId) {
 
-        //최근 영상 선택
+        // 최근 영상 선택
         Long videoId = videoService.getRecentVideoIdByUserId(userId);
-        List<Long> negativePositive = sentiService.getSentiCount(videoId);
         List<VideoDto> videoDtoList = videoService.getVideoList(userId);
 
-        //긍부정 키워드
+        // DB에서 감정 수치, 키워드 가져오기
+        List<Long> negativePositive = sentiService.getSentiCount(videoId);
         List<PositiveCommentDto> positiveCommentDtos = sentiService.getPositiveWord(videoId);
 
-        SentiWithVideoListDto response = new SentiWithVideoListDto(videoId, negativePositive.get(0), negativePositive.get(1), videoDtoList, positiveCommentDtos);
+        // 감정 데이터가 없을 경우 기본값 반환
+        if (negativePositive == null || positiveCommentDtos == null) {
+            return ResponseEntity.ok(new SentiWithVideoListDto(
+                    videoId,
+                    0L,
+                    0L,
+                    videoDtoList,
+                    List.of()
+            ));
+        }
 
+        //  정상 응답 반환
+        SentiWithVideoListDto response = new SentiWithVideoListDto(
+                videoId,
+                negativePositive.get(0),
+                negativePositive.get(1),
+                videoDtoList,
+                positiveCommentDtos
+        );
         return ResponseEntity.ok(response);
-
     }
 
     //http://localhost:8080/api/comments/senti-chart-videoid?videoId=41
@@ -118,14 +134,27 @@ public class VideoCommentController {
     public ResponseEntity<SentiWithVideoIdDto> getSentiByVideoId(@RequestParam Long videoId) {
 
         List<Long> negativePositive = sentiService.getSentiCount(videoId);
-
-        //긍부정 키워드
         List<PositiveCommentDto> positiveCommentDtos = sentiService.getPositiveWord(videoId);
 
-        SentiWithVideoIdDto response = new SentiWithVideoIdDto(videoId, negativePositive.get(0), negativePositive.get(1), positiveCommentDtos);
+        //  감정 데이터가 없을 경우 기본값 반환
+        if (negativePositive == null || positiveCommentDtos == null) {
+            return ResponseEntity.ok(new SentiWithVideoIdDto(
+                    videoId,
+                    0L,
+                    0L,
+                    List.of()
+            ));
+        }
+
+        //  정상 응답 반환
+        SentiWithVideoIdDto response = new SentiWithVideoIdDto(
+                videoId,
+                negativePositive.get(0),
+                negativePositive.get(1),
+                positiveCommentDtos
+        );
 
         return ResponseEntity.ok(response);
-
     }
 
 
