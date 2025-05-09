@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class NotSyncService {
 
-    @Value("${youtube.api.key}")
+    @Value("${youtube.api.key5}")
     private String apiKey;
 
     private static final String SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";

@@ -34,7 +34,7 @@ public class FetchVideoMetaService {
     private final VideoInterface videoInterface;
     private final VideoMetaInterface videoMetaInterface;
 
-    @Value("${youtube.api.key}")
+    @Value("${youtube.api.key5}")
     private String apiKey;
 
     public FetchVideoMetaService(

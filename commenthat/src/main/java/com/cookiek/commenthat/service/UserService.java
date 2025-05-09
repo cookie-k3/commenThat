@@ -55,4 +55,12 @@ public class UserService {
         return users;
     }
 
+    public Long maxId() {
+        return userRepository.getCurrentMaxUserId();
+    }
+
+    public List<User> getGreaterThan(Long userId) {
+        return userRepository.findAllByUserIdGreaterThan(userId);
+    }
+
 }

@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableAsync  //비동기 메서드 실행 활성화
@@ -22,6 +23,11 @@ public class CommenthatApplication {
 	@Bean
 	public TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
 		return new TransactionTemplate(transactionManager);
+	}
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
 	}
 
 }

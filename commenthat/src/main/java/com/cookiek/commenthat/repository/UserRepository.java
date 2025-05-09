@@ -4,6 +4,7 @@ import com.cookiek.commenthat.domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class UserRepository {
 
     private final EntityManager em;
@@ -73,6 +75,26 @@ public class UserRepository {
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    public Long getCurrentMaxUserId() {
+        try {
+            return em.createQuery("SELECT MAX(u.id) FROM User u", Long.class)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("MAX(user.id) 조회 중 오류 발생", e);
+            return null;
+        }
+    }
+
+    public List<User> findAllByUserIdGreaterThan(Long userId) {
+        return em.createQuery("""
+            SELECT u
+            FROM User u
+            WHERE u.id > :userId
+            """, User.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
 }

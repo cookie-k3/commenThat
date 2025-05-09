@@ -5,315 +5,323 @@ import com.cookiek.commenthat.domain.User;
 import com.cookiek.commenthat.domain.Video;
 import com.cookiek.commenthat.repository.UserInterface;
 import com.cookiek.commenthat.repository.VideoInterface;
-import jakarta.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Flux;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class FetchVideoService {
 
-    final int MINUS_MONTH = 3;
-
-    private final WebClient webClient;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private static final int MINUS_MONTH = 3;
     private final VideoInterface videoInterface;
     private final UserInterface userInterface;
     private final TransactionTemplate transactionTemplate;
+    private final RestTemplate restTemplate;
 
-    @Value("${youtube.api.key}")
-    private String apiKey;
+    @Value("${youtube.api.key5}") private String apiKey5;
+    @Value("${youtube.api.key6}") private String apiKey6;
+    private List<String> apiKeys;
+    private final AtomicInteger keyPointer = new AtomicInteger(0);
 
     public FetchVideoService(
-            WebClient.Builder builder,
             VideoInterface videoInterface,
             UserInterface userInterface,
-            TransactionTemplate transactionTemplate
+            TransactionTemplate transactionTemplate,
+            RestTemplate restTemplate  // ✅ RestTemplate 주입
     ) {
-        this.webClient = builder.baseUrl("https://www.googleapis.com/youtube/v3").build();
         this.videoInterface = videoInterface;
         this.userInterface = userInterface;
         this.transactionTemplate = transactionTemplate;
+        this.restTemplate = restTemplate;
     }
 
-    public void fetchVideosInitAsync(String channelId, Long userId) {
-        executorService.submit(() -> fetchAndSaveInit(channelId, userId));
+    @PostConstruct
+    public void initApiKeys() {
+        apiKeys = new ArrayList<>();
+        if (apiKey5 != null) apiKeys.add(apiKey5);
+        if (apiKey6 != null) apiKeys.add(apiKey6);
     }
 
-    public void fetchVideosByDateAsync(String channelId, Long userId, LocalDateTime fromDate) {
-        executorService.submit(() -> fetchAndSaveByDate(channelId, userId, fromDate));
+    /** 라운드로빈으로 다음 API 키를 꺼내는 헬퍼 */
+    private String nextApiKey() {
+        int idx = keyPointer.getAndUpdate(i -> (i + 1) % apiKeys.size());
+        return apiKeys.get(idx);
+    }
+
+    public void fetchVideosInit(String channelId, Long userId) {
+        fetchAndSaveInit(channelId, userId);
+    }
+
+    public void fetchVideosByDate(String channelId, Long userId, LocalDateTime fromDate) {
+        fetchAndSaveByDate(channelId, userId, fromDate);
     }
 
     private void fetchAndSaveInit(String channelId, Long userId) {
-        getVideoIdsInit(channelId)
-                .flatMapMany(Flux::fromIterable)
-                .buffer(50)
-                .flatMap(list -> getVideoDetails(list).flatMapMany(Flux::fromIterable))  // Flux<VideoDTO>
-                .collectList()
-                .doOnSuccess(videoList -> {
-                    transactionTemplate.executeWithoutResult(tx -> {
-                        User user = userInterface.findById(userId).orElse(null);
-                        if (user == null) {
-                            log.warn("User not found for userId: {}", userId);
-                            return;
-                        }
+        try {
+            List<String> videoIds = getVideoIdsInit(channelId);
 
-                        for (VideoDTO dto : videoList) {
-                            Video video = new Video();
-                            video.setTitle(dto.getTitle());
-                            video.setDescription(dto.getDescription());
-                            video.setThumbnail(dto.getThumbnail());
-                            video.setDate(dto.getUploadDate()); // 이미 LocalDateTime 형태
-                            video.setVideoYoutubeId(dto.getVideoYoutubeId());
-                            video.setUser(user);
-                            videoInterface.save(video);
-                        }
-                        log.info("Saved {} videos for userId {}", videoList.size(), userId);
-                    });
-                })
-                .doOnError(e -> log.error("Error in saving videos: {}", e.getMessage(), e))
-                .subscribe();
+            List<List<String>> partitionedLists = new ArrayList<>();
+            for (int i = 0; i < videoIds.size(); i += 50) {
+                partitionedLists.add(videoIds.subList(i, Math.min(i + 50, videoIds.size())));
+            }
+
+            List<VideoDTO> allVideoDetails = new ArrayList<>();
+            for (List<String> batch : partitionedLists) {
+                List<VideoDTO> videoDetails = getVideoDetails(batch);
+                allVideoDetails.addAll(videoDetails);
+            }
+
+            transactionTemplate.executeWithoutResult(tx -> {
+                User user = userInterface.findById(userId).orElse(null);
+                if (user == null) {
+                    log.warn("User not found for userId: {}", userId);
+                    return;
+                }
+
+                for (VideoDTO dto : allVideoDetails) {
+                    if (videoInterface.existsByVideoYoutubeId(dto.getVideoYoutubeId())) {
+                        log.info("이미 저장된 영상 - videoYoutubeId: {}", dto.getVideoYoutubeId());
+                        continue;
+                    }
+                    Video video = new Video();
+                    video.setTitle(dto.getTitle());
+                    video.setDescription(dto.getDescription());
+                    video.setThumbnail(dto.getThumbnail());
+                    video.setDate(dto.getUploadDate());
+                    video.setVideoYoutubeId(dto.getVideoYoutubeId());
+                    video.setUser(user);
+                    videoInterface.save(video);
+
+                }
+                log.info("Saved {} videos for userId {}", allVideoDetails.size(), userId);
+            });
+
+        } catch (Exception e) {
+            log.error("Error in saving videos: {}", e.getMessage(), e);
+        }
     }
 
     private void fetchAndSaveByDate(String channelId, Long userId, LocalDateTime fromDate) {
-        getVideoIdsByDate(channelId, fromDate)
-                .flatMapMany(Flux::fromIterable)
-                .buffer(50)
-                .flatMap(list -> getVideoDetails(list).flatMapMany(Flux::fromIterable))  // Flux<VideoDTO>
-                .collectList()
-                .doOnSuccess(videoList -> {
-                    transactionTemplate.executeWithoutResult(tx -> {
-                        User user = userInterface.findById(userId).orElse(null);
-                        if (user == null) {
-                            log.warn("User not found for userId: {}", userId);
-                            return;
-                        }
+        try {
+            List<String> videoIds = getVideoIdsByDate(channelId, fromDate);
 
-                        for (VideoDTO dto : videoList) {
-                            Video video = new Video();
-                            video.setTitle(dto.getTitle());
-                            video.setDescription(dto.getDescription());
-                            video.setThumbnail(dto.getThumbnail());
-                            video.setDate(dto.getUploadDate()); // 이미 LocalDateTime 형태
-                            video.setVideoYoutubeId(dto.getVideoYoutubeId());
-                            video.setUser(user);
-                            videoInterface.save(video);
-                        }
-                        log.info("Saved {} videos for userId {}", videoList.size(), userId);
-                    });
-                })
-                .doOnError(e -> log.error("Error in saving videos: {}", e.getMessage(), e))
-                .subscribe();
+            List<List<String>> partitionedLists = new ArrayList<>();
+            for (int i = 0; i < videoIds.size(); i += 50) {
+                partitionedLists.add(videoIds.subList(i, Math.min(i + 50, videoIds.size())));
+            }
+
+            List<VideoDTO> allVideoDetails = new ArrayList<>();
+            for (List<String> batch : partitionedLists) {
+                List<VideoDTO> videoDetails = getVideoDetails(batch);
+                allVideoDetails.addAll(videoDetails);
+            }
+
+            transactionTemplate.executeWithoutResult(tx -> {
+                User user = userInterface.findById(userId).orElse(null);
+                if (user == null) {
+                    log.warn("User not found for userId: {}", userId);
+                    return;
+                }
+
+                for (VideoDTO dto : allVideoDetails) {
+                    if (videoInterface.existsByVideoYoutubeId(dto.getVideoYoutubeId())) {
+                        log.info("이미 저장된 영상 - videoYoutubeId: {}", dto.getVideoYoutubeId());
+                        continue;
+                    }
+                    Video video = new Video();
+                    video.setTitle(dto.getTitle());
+                    video.setDescription(dto.getDescription());
+                    video.setThumbnail(dto.getThumbnail());
+                    video.setDate(dto.getUploadDate());
+                    video.setVideoYoutubeId(dto.getVideoYoutubeId());
+                    video.setUser(user);
+                    videoInterface.save(video);
+                }
+                log.info("Saved {} videos for userId {}", allVideoDetails.size(), userId);
+            });
+
+        } catch (Exception e) {
+            log.error("Error in saving videos: {}", e.getMessage(), e);
+        }
     }
 
-    private Mono<List<String>> getVideoIdsInit(String channelId) {
-        String publishedAfter = LocalDate.now().minusMonths(MINUS_MONTH).atStartOfDay()
-                .toInstant(ZoneOffset.UTC).toString();
+    private List<String> getVideoIdsInit(String channelId) {
+        String publishedAfter = toRfc3339(
+                LocalDate.now().minusMonths(MINUS_MONTH).atStartOfDay());
 
         List<String> allVideoIds = new ArrayList<>();
 
-        return fetchVideoIdsRecursive(channelId, publishedAfter, null, allVideoIds)
-                .onErrorResume(e -> {
-                    log.warn("getVideoIdsInit 도중 오류 발생, 누적된 데이터 반환: {}건", allVideoIds.size());
-                    return Mono.empty(); // 오류 발생 시 처리
-                })
-                .then(Mono.just(allVideoIds));
+        try {
+            fetchVideoIdsRecursive(channelId, publishedAfter, null, allVideoIds);
+        } catch (Exception e) {
+            log.warn("getVideoIdsInit 오류 발생: {}", e.getMessage(), e);
+        }
+
+        return allVideoIds;
     }
 
-    private Mono<List<String>> getVideoIdsByDate(String channelId, LocalDateTime fromDate) {
-        // 입력받은 시각 +1초 → 그 이후 영상 조회
-        String publishedAfter = fromDate
-                .plusSeconds(1)
-                .toInstant(ZoneOffset.UTC)
-                .toString();
+    private List<String> getVideoIdsByDate(String channelId, LocalDateTime fromDate) {
+        String publishedAfter = toRfc3339(fromDate);
 
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/search")
-                        .queryParam("key", apiKey)
-                        .queryParam("channelId", channelId)
-                        .queryParam("part", "id")
-                        .queryParam("order", "date")
-                        .queryParam("publishedAfter", publishedAfter)
-                        .queryParam("maxResults", 50)
-                        .queryParam("type", "video")
-                        .build())
-                .retrieve()
-                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                        response -> response.bodyToMono(String.class).flatMap(errorBody -> {
-                            log.error("YouTube API 오류 응답 (getVideoIdsByDate): {}", errorBody);
-                            return Mono.error(new RuntimeException("YouTube API 호출 실패: " + errorBody));
-                        }))
-                .bodyToMono(Map.class)
-                .map(response -> {
-                    List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
-                    if (items == null) return List.of();
-                    return items.stream()
-                            .map(item -> ((Map<String, String>) item.get("id")).get("videoId"))
-                            .collect(Collectors.toList());
-                });
+        try {
+            String url = UriComponentsBuilder.fromHttpUrl("https://www.googleapis.com/youtube/v3/search")
+                    .queryParam("key", nextApiKey())
+                    .queryParam("channelId", channelId)
+                    .queryParam("part", "snippet")
+                    .queryParam("order", "date")
+                    .queryParam("publishedAfter", publishedAfter)
+                    .queryParam("maxResults", 50)
+                    .queryParam("type", "video")
+                    .build()
+                    .toUriString();
+
+            Map<String, Object> resp = restTemplate.getForObject(url, Map.class);
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> items = (List<Map<String, Object>>) resp.get("items");
+
+            if (items == null) {
+                return Collections.emptyList();
+            }
+
+            return items.stream()
+                    .map(item -> ((Map<String, String>) item.get("id")).get("videoId"))
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.warn("getVideoIdsByDate error: {}", e.getMessage(), e);
+            return Collections.emptyList();
+        }
     }
 
-    private Mono<Void> fetchVideoIdsRecursive(String channelId, String publishedAfter, String pageToken, List<String> accumulator) {
-        return webClient.get()
-                .uri(uriBuilder -> {
-                    var builder = uriBuilder
-                            .path("/search")
-                            .queryParam("key", apiKey)
-                            .queryParam("channelId", channelId)
-                            .queryParam("part", "id")
-                            .queryParam("order", "date")
-                            .queryParam("publishedAfter", publishedAfter)
-                            .queryParam("maxResults", 50)
-                            .queryParam("type", "video");
-                    if (pageToken != null) {
-                        builder.queryParam("pageToken", pageToken);
-                    }
-                    return builder.build();
-                })
-                .retrieve()
-                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                        response -> response.bodyToMono(String.class).flatMap(errorBody -> {
-                            log.error("YouTube API 오류 응답 (fetchVideoIdsRecursive): {}", errorBody);
-                            return Mono.error(new RuntimeException("YouTube API 호출 실패: " + errorBody));
-                        }))
-                .bodyToMono(Map.class)
-                .flatMap(response -> {
-                    try {
-                        List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
-                        if (items != null) {
-                            items.stream()
-                                    .map(item -> ((Map<String, String>) item.get("id")).get("videoId"))
-                                    .forEach(accumulator::add);
-                        }
-                        String nextPageToken = (String) response.get("nextPageToken");
-                        if (nextPageToken != null && accumulator.size() < 500) { // 안전장치로 최대 500개 제한
-                            return fetchVideoIdsRecursive(channelId, publishedAfter, nextPageToken, accumulator);
-                        } else {
-                            return Mono.empty();
-                        }
-                    } catch (Exception e) {
-                        log.error("API 응답 처리 중 오류 발생: {}", e.getMessage(), e);
-                        return Mono.error(e);
-                    }
-                });
+    private void fetchVideoIdsRecursive(String channelId,
+                                        String publishedAfter,
+                                        String pageToken,
+                                        List<String> accumulator) {
+        try {
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://www.googleapis.com/youtube/v3/search")
+                    .queryParam("key", nextApiKey())
+                    .queryParam("channelId", channelId)
+                    .queryParam("part", "snippet")
+                    .queryParam("order", "date")
+                    .queryParam("publishedAfter", publishedAfter)
+                    .queryParam("maxResults", 50)
+                    .queryParam("type", "video");
+
+            if (pageToken != null) {
+                builder.queryParam("pageToken", pageToken);
+            }
+
+            String url = builder.build().toUriString();
+
+
+            Map<String, Object> resp = restTemplate.getForObject(url, Map.class);
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> items = (List<Map<String, Object>>) resp.get("items");
+            if (items != null) {
+                items.forEach(item -> accumulator.add(
+                        ((Map<String, String>) item.get("id")).get("videoId")));
+            }
+
+            String next = (String) resp.get("nextPageToken");
+            if (next != null && accumulator.size() < 500) {
+                fetchVideoIdsRecursive(channelId, publishedAfter, next, accumulator);
+            }
+
+        } catch (Exception e) {
+            log.warn("fetchVideoIdsRecursive error: {}", e.getMessage(), e);
+        }
     }
 
-    private Mono<List<VideoDTO>> getVideoDetails(List<String> videoIds) {
+    private List<VideoDTO> getVideoDetails(List<String> videoIds) {
         String ids = String.join(",", videoIds);
 
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/videos")
-                        .queryParam("key", apiKey)
-                        .queryParam("id", ids)
-                        .queryParam("part", "snippet,contentDetails") // duration 포함
-                        .build())
-                .retrieve()
-                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                        response -> response.bodyToMono(String.class).flatMap(errorBody -> {
-                            log.error("YouTube API 오류 응답 (getVideoDetails): {}", errorBody);
-                            return Mono.error(new RuntimeException("YouTube API 호출 실패: " + errorBody));
-                        }))
-                .bodyToMono(Map.class)
-                .map(response -> {
-                    List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
-                    if (items == null) return List.of();
+        try {
+            String url = UriComponentsBuilder.fromHttpUrl("https://www.googleapis.com/youtube/v3/videos")
+                    .queryParam("key", nextApiKey())
+                    .queryParam("id", ids)
+                    .queryParam("part", "snippet,contentDetails")
+                    .build()
+                    .toUriString();
 
-                    return items.stream().map(item -> {
+            Map<String, Object> resp = restTemplate.getForObject(url, Map.class);
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> items = (List<Map<String, Object>>) resp.get("items");
+
+            if (items == null) {
+                return Collections.emptyList();
+            }
+
+            return items.stream().map(item -> {
                         try {
-                            String videoId = (String) item.get("id");
                             Map<String, Object> snippet = (Map<String, Object>) item.get("snippet");
-                            Map<String, Object> thumbnails = (Map<String, Object>) snippet.get("thumbnails");
-
-                            // ✅ 고화질 써버내일 선택
-                            String thumbnailUrl = null;
-                            if (thumbnails.get("maxres") != null) {
-                                thumbnailUrl = (String) ((Map<String, Object>) thumbnails.get("maxres")).get("url");
-                            } else if (thumbnails.get("high") != null) {
-                                thumbnailUrl = (String) ((Map<String, Object>) thumbnails.get("high")).get("url");
-                            } else if (thumbnails.get("medium") != null) {
-                                thumbnailUrl = (String) ((Map<String, Object>) thumbnails.get("medium")).get("url");
-                            } else if (thumbnails.get("default") != null) {
-                                thumbnailUrl = (String) ((Map<String, Object>) thumbnails.get("default")).get("url");
-                            }
-
-                            // ✅ Shorts 체제 (독일 영상 개발 모델) - → 2분 (<= 120초) 이하 제외
                             Map<String, Object> contentDetails = (Map<String, Object>) item.get("contentDetails");
+
                             String duration = (String) contentDetails.get("duration");
                             if (isShorts(duration)) {
-                                log.info("Skip short video (<2min): {} [{}]", snippet.get("title"), duration);
+                                log.info("쇼츠 영상 제외됨 - videoId: {}, duration: {}", item.get("id"), duration);
                                 return null;
                             }
 
+                            Map<String, Object> thumbnails = (Map<String, Object>) snippet.get("thumbnails");
+                            String thumbnailUrl = Optional.ofNullable((Map<String, Object>) thumbnails.get("maxres"))
+                                    .map(m -> m.get("url").toString())
+                                    .orElseGet(() -> Optional.ofNullable((Map<String, Object>) thumbnails.get("high"))
+                                            .map(m -> m.get("url").toString()).orElse(null));
+
                             String publishedAtStr = (String) snippet.get("publishedAt");
-                            LocalDateTime publishedAt = LocalDateTime.parse(publishedAtStr, DateTimeFormatter.ISO_DATE_TIME);
+                            LocalDateTime publishedAt = ZonedDateTime.parse(publishedAtStr,
+                                            DateTimeFormatter.ISO_DATE_TIME)
+                                    .withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+                                    .toLocalDateTime();
 
                             return new VideoDTO(
                                     (String) snippet.get("title"),
                                     (String) snippet.get("description"),
                                     publishedAt,
                                     thumbnailUrl,
-                                    videoId
-                            );
-                        } catch (Exception e) {
-                            log.warn("Failed to parse video item: {}", item, e);
+                                    (String) item.get("id"));
+                        } catch (Exception ex) {
+                            log.warn("Failed to parse video item: {}", item, ex);
                             return null;
                         }
-                    }).filter(dto -> dto != null).collect(Collectors.toList());
-                });
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.warn("getVideoDetails error: {}", e.getMessage(), e);
+            return Collections.emptyList();
+        }
     }
 
     private boolean isShorts(String duration) {
         try {
-            // ISO-8601 Duration 문자열을 java.time.Duration으로 직접 파싱
-            Duration dur = Duration.parse(duration);
-
-            return dur.getSeconds() <= 120; // 2분 이하이면 Shorts로 간주
+            return Duration.parse(duration).getSeconds() <= 120;
         } catch (Exception e) {
-            log.warn("Duration 파싱 실패: {}", duration);
+            log.warn("Duration 파싱 실패: {}", duration, e);
             return false;
         }
     }
 
-    @PreDestroy
-    public void shutdown() {
-        log.info("FetchVideoService 종료 중... ExecutorService shutdown 시작");
-
-        executorService.shutdown(); // 먼저 graceful shutdown
-
-        try {
-            // 최대 10초 대기 후 강제 종료 시도
-            if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
-                log.warn("ExecutorService가 종료되지 않아 강제 종료 시도");
-                executorService.shutdownNow();
-            } else {
-                log.info("ExecutorService 정상 종료됨");
-            }
-        } catch (InterruptedException e) {
-            log.error("ExecutorService 종료 중 인터럽트 발생", e);
-            executorService.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
+    private static String toRfc3339(LocalDateTime ldt) {
+        return ldt.atZone(ZoneId.of("Asia/Seoul"))   // ① 애플리케이션 표준 타임존
+                .withZoneSameInstant(ZoneOffset.UTC)
+                .truncatedTo(ChronoUnit.SECONDS)   // ② 초 단위로 잘라 마이크로초 제거
+                .format(DateTimeFormatter.ISO_INSTANT); // ③ 2025-02-08T15:00:00Z
     }
-
 }

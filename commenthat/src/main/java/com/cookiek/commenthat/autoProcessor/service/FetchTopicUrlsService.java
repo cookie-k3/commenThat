@@ -29,19 +29,19 @@ public class FetchTopicUrlsService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ReferenceInterface referenceInterface;
 
-    @Value("${youtube.api.key}")
-    private String apiKey1;
+    @Value("${youtube.api.key5}")
+    private String apiKey5;
 
-    @Value("${youtube.api.key2}")
-    private String apiKey2;
+    @Value("${youtube.api.key6}")
+    private String apiKey6;
 
     private List<String> apiKeys;
 
     @PostConstruct
     public void initApiKeys() {
         apiKeys = new ArrayList<>();
-        if (apiKey1 != null) apiKeys.add(apiKey1);
-        if (apiKey2 != null) apiKeys.add(apiKey2);
+        if (apiKey5 != null) apiKeys.add(apiKey5);
+        if (apiKey6 != null) apiKeys.add(apiKey6);
     }
 
     @Async

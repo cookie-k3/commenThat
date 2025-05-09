@@ -35,7 +35,7 @@ public class FetchChannelInfoService {
     // 병렬 요청을 위한 ExecutorService (스레드풀)
     private ExecutorService executorService;
 
-    @Value("${youtube.api.key}")
+    @Value("${youtube.api.key6}")
     private String apiKey;
 
     public FetchChannelInfoService(WebClient.Builder webClientBuilder,

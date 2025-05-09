@@ -6,12 +6,14 @@ import com.cookiek.commenthat.domain.Video;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
+@Slf4j
 public class SentiRepository {
 
     @PersistenceContext
@@ -52,13 +54,32 @@ public class SentiRepository {
         // Positive 단어들과 갯수를 [a:3, b:5] 형태로 변환
         String keywordsJson = convertDtoListToJson(words);
 
-        SentiStat sentiStat = new SentiStat();
-        sentiStat.setVideo(video);
-        sentiStat.setIsPositive(isPositive.intValue());
-        sentiStat.setCount((long) words.size());
-        sentiStat.setKeywords(keywordsJson);
+        // 기존 데이터 있는지 조회
+        SentiStat existing = em.createQuery("""
+            SELECT s FROM SentiStat s
+            WHERE s.video = :video AND s.isPositive = :isPositive
+            """, SentiStat.class)
+                .setParameter("video", video)
+                .setParameter("isPositive", isPositive.intValue())
+                .getResultStream()    // 결과 0개면 Optional.empty() 반환
+                .findFirst()
+                .orElse(null);
 
-        em.persist(sentiStat);
+        if (existing != null) {
+            // ✅ 이미 있으면 업데이트만
+            existing.setCount((long) words.size());
+            existing.setKeywords(keywordsJson);
+            log.info("SentiStat 업데이트 - videoId={}, isPositive={}", videoId, isPositive);
+        } else {
+            // ✅ 없으면 새로 INSERT
+            SentiStat sentiStat = new SentiStat();
+            sentiStat.setVideo(video);
+            sentiStat.setIsPositive(isPositive.intValue());
+            sentiStat.setCount((long) words.size());
+            sentiStat.setKeywords(keywordsJson);
+            em.persist(sentiStat);
+            log.info("SentiStat 새로 저장 - videoId={}, isPositive={}", videoId, isPositive);
+        }
     }
 
     private String convertDtoListToJson(List<PositiveCommentDto> list) {
