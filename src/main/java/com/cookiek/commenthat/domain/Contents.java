@@ -24,7 +24,7 @@ public class Contents {
     private LocalDateTime updateDate;
 
     @Column(name = "video_period")
-    private LocalDate videoPeriod;
+    private String videoPeriod;
 
     @Lob
     @Column(name = "comment_analysis", columnDefinition = "TEXT")

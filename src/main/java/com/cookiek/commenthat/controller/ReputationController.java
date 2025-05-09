@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List; 
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,9 +21,9 @@ public class ReputationController {
         return reputationService.getTopUsersByViews();
     }
 
-    @GetMapping("/subscribers")
-    public List<UserRankingDto> getTopUsersBySubscribers() {
-        return reputationService.getTopUsersBySubscribers();
+    @GetMapping("/uploads")
+    public List<UserRankingDto> getTopUsersByUploadCount() {
+        return reputationService.getTopUsersByUploadCount();
     }
 
     @GetMapping("/positive")

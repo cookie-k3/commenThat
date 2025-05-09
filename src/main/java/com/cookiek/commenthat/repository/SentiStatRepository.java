@@ -1,36 +1,37 @@
 package com.cookiek.commenthat.repository;
 
 import com.cookiek.commenthat.domain.SentiStat;
+import com.cookiek.commenthat.dto.PositiveRatioDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface SentiStatRepository extends JpaRepository<SentiStat, Long> {
 
-    // 특정 영상(videoId)에 대한 긍정/부정 댓글 수 조회 (0번 인덱스: 부정 수, 1번 인덱스: 긍정 수)
     List<SentiStat> findByVideoId(Long videoId);
 
-    /**
-     * 긍정 댓글 수 기준으로 유저를 랭킹하는 쿼리
-     * - SentiStat 테이블에서 is_positive = 1 (긍정)인 것만 조회
-     * - SentiStat -> Video -> User를 JOIN
-     * - 같은 유저(userId)끼리 긍정 댓글 수(count)를 합산(SUM)
-     * - 긍정 댓글 수 합계 기준으로 내림차순 정렬
-     *
-     * 결과 컬럼:
-     *   [0]: userId
-     *   [1]: loginId
-     *   [2]: channelImg
-     *   [3]: 긍정 댓글 합계(count)
-     */
-    @Query("""
-    SELECT v.user.userId, v.user.loginId, v.user.channelImg, v.user.channelName, SUM(s.count)
-    FROM SentiStat s
-    JOIN s.video v
-    WHERE s.isPositive = 1
-    GROUP BY v.user.userId, v.user.loginId, v.user.channelImg, v.user.channelName
-    ORDER BY SUM(s.count) DESC
-""")
-    List<Object[]> findTopUsersByPositiveComments();
+    @Query(value = """
+    SELECT
+        u.user_id AS userId,
+        u.login_id AS loginId,
+        u.channel_img AS channelImg,
+        u.channel_name AS channelName,
+        SUM(CASE WHEN s.is_positive = 1 THEN s.count ELSE 0 END) * 1.0 / SUM(s.count) AS ratio
+    FROM senti_stat s
+    JOIN video v ON s.video_id = v.video_id
+    JOIN user u ON v.user_id = u.user_id
+    JOIN video_meta vm ON vm.video_id = v.video_id
+    WHERE vm.update_date BETWEEN :startDate AND :endDate
+    GROUP BY u.user_id, u.login_id, u.channel_img, u.channel_name
+    HAVING SUM(s.count) > 0
+    ORDER BY ratio DESC
+    """, nativeQuery = true)
+    List<Object[]> findTopUsersByPositiveRatio(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
 }
