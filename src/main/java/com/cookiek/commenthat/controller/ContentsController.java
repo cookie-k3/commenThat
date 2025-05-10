@@ -41,12 +41,22 @@ public class ContentsController {
         return ResponseEntity.ok(response);
     }
 
-    //추천 보고서 보여주는 코드
-    //http://localhost:8080/api/contents/report?userId=2&contentsId=1
-    @GetMapping("/report")
-    public ResponseEntity<ReportDto> getReport(@RequestParam Long contentsId) {
+//    //추천 보고서 보여주는 코드
+//    //http://localhost:8080/api/contents/report?userId=2&contentsId=1
+//    @GetMapping("/report")
+//    public ResponseEntity<ReportDto> getReport(@RequestParam Long contentsId) {
+//
+//        ReportDto response = contentsService.getReport(contentsId);
+//
+//        return ResponseEntity.ok(response);
+//    }
 
-        ReportDto response = contentsService.getReport(contentsId);
+    //추천 통계 요약
+    //http://localhost:8080/api/contents/summary?userId=2
+    @GetMapping("/summary")
+    public ResponseEntity<ReportDto> getContentsSummary(@RequestParam Long userId) {
+
+        ReportDto response = contentsService.getContentsSummary(userId);
 
         return ResponseEntity.ok(response);
     }

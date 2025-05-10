@@ -81,22 +81,50 @@ public class ContentsRepository {
                 .toList();
     }
 
-    public ReportDto getReportByContentsId(Long contentsId) {
+//    public ReportDto getReportByContentsId(Long contentsId) {
+//        Object[] result = em.createQuery("""
+//            SELECT c.updateDate, c.topic, c.channelAnalysis, c.commentAnalysis, c.topicRec
+//            FROM Contents c
+//            WHERE c.id = :contentsId
+//            """, Object[].class)
+//                .setParameter("contentsId", contentsId)
+//                .getSingleResult();
+//
+//        LocalDateTime updateDate = (LocalDateTime) result[0];
+//        String topic = (String) result[1];
+//        String channelAnalysis = (String) result[2];
+//        String commentAnalysis = (String) result[3];
+//        String topicRec = (String) result[4];
+//
+//        return new ReportDto(updateDate, topic, channelAnalysis, commentAnalysis, topicRec);
+//    }
+
+    public ReportDto getSummaryContentsByUserId(Long userId) {
         Object[] result = em.createQuery("""
-            SELECT c.updateDate, c.topic, c.channelAnalysis, c.commentAnalysis, c.topicRec
-            FROM Contents c
-            WHERE c.id = :contentsId
-            """, Object[].class)
-                .setParameter("contentsId", contentsId)
+         SELECT c.updateDate, c.topic, c.topicAnalysis, c.topicRec, 
+                c.topViewVideo, c.topPositiveVideo, c.topNegativeVideo, 
+                c.positiveKeywords, c.topCategories
+         FROM Contents c
+         WHERE c.user.id = :userId
+         ORDER BY c.updateDate DESC
+    """, Object[].class)
+                .setParameter("userId", userId)
+                .setMaxResults(1)  // 최신 1개만 가져옴
                 .getSingleResult();
 
         LocalDateTime updateDate = (LocalDateTime) result[0];
         String topic = (String) result[1];
-        String channelAnalysis = (String) result[2];
-        String commentAnalysis = (String) result[3];
-        String topicRec = (String) result[4];
+        String topicAnalysis = (String) result[2];
+        String topicRec = (String) result[3];
+        String topViewVideo = (String) result[4];
+        String topPositiveVideo = (String) result[5];
+        String topNegativeVideo = (String) result[6];
+        String topPositiveKeywords = (String) result[7];
+        String topCategories = (String) result[8];
 
-        return new ReportDto(updateDate, topic, channelAnalysis, commentAnalysis, topicRec);
+        return new ReportDto(updateDate, topic, topicAnalysis, topicRec,
+                topViewVideo, topPositiveVideo, topNegativeVideo,
+                topPositiveKeywords, topCategories);
     }
 
 }
