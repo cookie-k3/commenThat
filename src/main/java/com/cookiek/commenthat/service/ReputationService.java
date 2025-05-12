@@ -25,10 +25,17 @@ public class ReputationService {
     private final UploadRepository uploadRepository;
     private final SentiStatRepository sentiStatRepository;
 
-    private final LocalDateTime start = LocalDate.now().withDayOfMonth(1).atStartOfDay();
-    private final LocalDateTime end = LocalDate.now()
-            .withDayOfMonth(LocalDate.now().lengthOfMonth())
+    // 지난달 기준으로 시작일, 종료일 계산
+    private final LocalDateTime prevMonthStart = LocalDate.now().minusMonths(1).withDayOfMonth(1).atStartOfDay();
+
+    private final LocalDateTime prevMonthEnd = LocalDate.now().minusMonths(1)
+            .withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth())
             .atTime(23, 59, 59, 999_999_000); // 999ms + 999,000ns
+
+//    private final LocalDateTime start = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+//    private final LocalDateTime end = LocalDate.now()
+//            .withDayOfMonth(LocalDate.now().lengthOfMonth())
+//            .atTime(23, 59, 59, 999_999_000); // 999ms + 999,000ns
 
 
     public List<UserRankingDto> getTopUsersByViews() {
@@ -47,9 +54,9 @@ public class ReputationService {
     }
 
     public List<UserRankingDto> getTopUsersByUploadCount() {
-        log.info("[성실 킹왕짱] 랭킹 계산 시작");
+        log.info("[성실 킹왕짱] 지난달 기준 랭킹 계산 시작");
 
-        List<Object[]> rawResult = uploadRepository.findTopUsersByUploadCountNative(start, end);
+        List<Object[]> rawResult = uploadRepository.findTopUsersByUploadCountNative(prevMonthStart, prevMonthEnd);
 
         for (Object[] row : rawResult) {
             Long userId = ((Number) row[0]).longValue();
@@ -59,12 +66,11 @@ public class ReputationService {
 
             log.info("🔍 Upload Count → userId: {}, loginId: {}, channelName: {}, count: {}", userId, loginId, channelName, count);
 
-            // ✅ userId 6번(침착맨)일 경우, 어떤 영상이 포함되었는지 로그로 출력
             if (userId == 6L) {
-                List<com.cookiek.commenthat.domain.Video> videos = uploadRepository.findVideosByUserIdAndDateRange(userId, start, end);
+                List<com.cookiek.commenthat.domain.Video> videos = uploadRepository.findVideosByUserIdAndDateRange(userId, prevMonthStart, prevMonthEnd);
                 log.info("📋 침착맨 영상 목록 ({})개:", videos.size());
                 for (com.cookiek.commenthat.domain.Video video : videos) {
-                    log.info("📽 videoId: {}, uploadDate: {}", video.getId(), video.getDate()); // ✅ 수정된 getter
+                    log.info("📽 videoId: {}, uploadDate: {}", video.getId(), video.getDate());
                 }
             }
         }
@@ -80,8 +86,25 @@ public class ReputationService {
     }
 
     public List<UserRankingDto> getTopUsersByPositiveComments() {
-        log.info("[긍정 킹왕짱] 랭킹 계산 시작");
-        return sentiStatRepository.findTopUsersByPositiveRatio(start, end).stream()
+        log.info("[긍정 킹왕짱] 지난달 기준 랭킹 계산 시작");
+
+        // 쿼리 결과 받아오기
+        List<Object[]> result = sentiStatRepository.findTopUsersByPositiveRatio(prevMonthStart, prevMonthEnd);
+
+        // 👉 로그로 쿼리 결과 출력
+        log.info("총 긍정 랭킹 유저 수: {}", result.size());
+        for (Object[] row : result) {
+            Long userId = ((Number) row[0]).longValue();
+            String loginId = (String) row[1];
+            String channelName = (String) row[3];
+            BigDecimal ratio = (BigDecimal) row[4];
+
+            log.info("👍 긍정 비율 유저 → userId: {}, loginId: {}, 채널명: {}, 비율: {}",
+                    userId, loginId, channelName, ratio);
+        }
+
+        // DTO 변환
+        return result.stream()
                 .map(row -> new UserRankingDto(
                         ((Number) row[0]).longValue(),
                         (String) row[1],
@@ -92,4 +115,6 @@ public class ReputationService {
                                 .setScale(2, RoundingMode.HALF_UP)
                 )).collect(Collectors.toList());
     }
+
+
 }

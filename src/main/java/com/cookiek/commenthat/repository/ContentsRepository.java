@@ -25,15 +25,35 @@ public class ContentsRepository {
 
     private final EntityManager em;
 
-    public List<String> getTopicsByUserId(Long userId) {
-        return em.createQuery("""
+    public List<String> getLatestTopicsByUserId(Long userId) {
+        String jsonTopic = em.createQuery("""
         SELECT c.topic
         FROM Contents c
         WHERE c.user.id = :userId
+        ORDER BY c.updateDate DESC
         """, String.class)
                 .setParameter("userId", userId)
-                .getResultList();
+                .setMaxResults(1)
+                .getSingleResult();
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(jsonTopic, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
+
+//    public List<String> getTopicsByUserId(Long userId) {
+//        return em.createQuery("""
+//        SELECT c.topic
+//        FROM Contents c
+//        WHERE c.user.id = :userId
+//        """, String.class)
+//                .setParameter("userId", userId)
+//                .getResultList();
+//    }
 
     public List<TopicUrlsDto> getLatestTopicUrlsByUserId(Long userId) {
         // 1) 최신 update_date 가져오기

@@ -15,7 +15,7 @@ public class ContentsService {
     private final ContentsRepository contentsRepository;
 
     public List<String> getTopics(Long userId) {
-        return contentsRepository.getTopicsByUserId(userId);
+        return contentsRepository.getLatestTopicsByUserId(userId);
     }
 
     public List<TopicUrlsDto> getTopicUrls(Long userId) {
