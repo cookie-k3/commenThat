@@ -22,8 +22,15 @@ public class ContentsService {
         return contentsRepository.getLatestTopicUrlsByUserId(userId);
     }
 
-    public ReportDto getReport(Long contentsId) {
-        return contentsRepository.getReportByContentsId(contentsId);
+
+
+    public ReportDto getContentsSummary(Long userId) {
+        return contentsRepository.getSummaryContentsByUserId(userId);
     }
+
+    public ReportDto getContentsReport(Long userId) {
+        return contentsRepository.getSummaryContentsByUserId(userId);
+    }
+
 
 }

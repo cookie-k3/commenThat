@@ -13,7 +13,12 @@ public class ReportDto {
 
     private String topic;
 
-    private String channelAnalysis;
-    private String commentAnalysis;
+    private String topicAnalysis;
     private String topicRec;
+    private String topViewVideo;
+    private String topPositiveVideo;
+    private String topNegativeVideo;
+    private String topPositiveKeywords;
+    private String topCategories;
+
 }
