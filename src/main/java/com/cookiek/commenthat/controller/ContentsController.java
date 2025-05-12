@@ -1,9 +1,12 @@
 package com.cookiek.commenthat.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.cookiek.commenthat.dto.CategoryCommentsDto;
 import com.cookiek.commenthat.dto.ReportDto;
 import com.cookiek.commenthat.dto.TopicUrlsDto;
+import com.cookiek.commenthat.repository.ContentsRepository;
 import com.cookiek.commenthat.service.ContentsService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,15 +44,38 @@ public class ContentsController {
         return ResponseEntity.ok(response);
     }
 
-//    //추천 보고서 보여주는 코드
-//    //http://localhost:8080/api/contents/report?userId=2&contentsId=1
-//    @GetMapping("/report")
-//    public ResponseEntity<ReportDto> getReport(@RequestParam Long contentsId) {
-//
-//        ReportDto response = contentsService.getReport(contentsId);
-//
-//        return ResponseEntity.ok(response);
-//    }
+    //추천 보고서 보여주는 코드
+    //http://localhost:8080/api/contents/report?userId=2&index=0
+    @GetMapping("/report")
+    public ReportDto getReport(@RequestParam Long userId, @RequestParam int index) {
+        ReportDto result = contentsService.getContentsReport(userId);
+
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> topics = List.of();
+        List<String> topicRecs = List.of();
+        List<String> topicAnalyses = List.of();
+
+        try {
+            topics = mapper.readValue(result.getTopic(), new TypeReference<List<String>>() {});
+            topicRecs = mapper.readValue(result.getTopicRec(), new TypeReference<List<String>>() {});
+            topicAnalyses = mapper.readValue(result.getTopicAnalysis(), new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String topic = topics.size() > index ? topics.get(index) : null;
+        String topicRec = topicRecs.size() > index ? topicRecs.get(index) : null;
+        String topicAnalysis = topicAnalyses.size() > index ? topicAnalyses.get(index) : null;
+
+        return new ReportDto(
+                null,
+                topic,
+                topicAnalysis,
+                topicRec,
+                null, null, null, null, null
+        );
+    }
+
 
     //추천 통계 요약
     //http://localhost:8080/api/contents/summary?userId=2

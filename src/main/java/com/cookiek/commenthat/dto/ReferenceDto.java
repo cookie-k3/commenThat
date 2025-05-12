@@ -11,5 +11,6 @@ public class ReferenceDto {
     private String title;
     private String url;
     private Long views;
+    private int index;
 
 }
