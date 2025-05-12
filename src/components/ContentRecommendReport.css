@@ -41,3 +41,51 @@
   line-height: 1.6;
   white-space: pre-line;
 }
+
+.thumbnail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4개씩 한 줄 */
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.thumbnail-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.thumbnail-link {
+  display: block;
+  text-decoration: none;
+}
+
+.thumbnail-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.thumbnail-wrapper:hover .thumbnail-img {
+  transform: scale(1.05);
+}
+
+.thumbnail-hover-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.thumbnail-wrapper:hover .thumbnail-hover-title {
+  opacity: 1;
+}

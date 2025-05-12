@@ -44,13 +44,13 @@ const View = () => {
     };
     if (user?.userId) fetchViewData();
   }, [user]);
-
+  const recentData = data.slice(-7);
   const chartData = {
-    labels: data.map((entry) => entry.date.slice(0, 10)),
+    labels: recentData.map((entry) => entry.date.slice(0, 10)),
     datasets: [
       {
         label: "총 조회수",
-        data: data.map((entry) => entry.totalViews),
+        data: recentData.map((entry) => entry.totalViews),
         borderColor: "rgba(255, 99, 132, 1)",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         fill: true,
@@ -74,7 +74,7 @@ const View = () => {
       <div className="home-main">
         <TopBar />
         <div className="subscriber-container">
-          <h2>조회수 변화 추이</h2>
+          <h2>채널 조회수 추이</h2>
           {data.length === 0 ? (
             <p style={{ color: "#999", fontSize: "14px" }}>데이터 없음</p>
           ) : (

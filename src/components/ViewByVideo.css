@@ -1,0 +1,29 @@
+/* ViewByVideo 전체 컨테이너 */
+.view-by-video-container {
+  display: flex;
+  height: 100vh;
+  background-color: whitesmoke;
+}
+
+/* 좌측 헤더 제외한 메인 영역 */
+.view-by-video-main {
+  flex: 1;
+  padding: 0 40px;
+  overflow-x: hidden;
+}
+
+/* 그래프 박스 */
+.view-by-video-chart-box {
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  margin: 30px;
+  flex: 1;
+}
+
+.view-by-video-chart-box h2 {
+  font-family: "GmarketBold";
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-align: center;
+}

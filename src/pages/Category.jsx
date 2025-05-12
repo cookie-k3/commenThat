@@ -36,20 +36,16 @@ const categoryIdMap = {
 };
 
 const COLORS = [
-  "#F8C8C4",
-  "#AED9E0",
-  "#E6B8B7",
-  "#C1BBDD",
-  "#FFF2AC",
-  "#F6C1B4",
-  "#AED9E0",
-  "#B0C9E8",
-  "#F8C8C4",
-  "#B2E2C2",
-  "#F9D5C2",
-  "#BFD7EA",
-  "#A0A0A0",
-  "#E0E0E0",
+  "#FAD6E5", // 연핑크 (붉은 느낌 약함)
+  "#AED9E0", // 연하늘 (파스텔 블루)
+  "#B2E2C2", // 연민트
+  "#FFF2AC", // 연노랑
+  "#C1BBDD", // 연보라
+  "#A2D2FF", // 맑은 하늘색
+  "#FFC8A2", // 살구색
+  "#B5EAD7", // 민트+연녹색
+  "#FFDAC1", // 연살구핑크
+  "#E2F0CB", // 연한 연두
 ];
 
 const RADIAN = Math.PI / 180;
@@ -193,7 +189,7 @@ const Category = () => {
                 }}
               >
                 {/* 기타 제외 체크박스 */}
-                <div style={{ marginBottom: "10px" }}>
+                {/* <div style={{ marginBottom: "10px" }}>
                   <label>
                     <input
                       type="checkbox"
@@ -202,7 +198,7 @@ const Category = () => {
                     />{" "}
                     기타 제외해서 보기
                   </label>
-                </div>
+                </div> */}
 
                 <PieChart width={510} height={500}>
                   <Pie
