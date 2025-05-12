@@ -46,124 +46,123 @@ public class AutoProcessorController {
      * 스케쥴링 코드
      **/
 
-    // 모든 user의 channelInfo 업데이트
-    @Scheduled(cron = "0 0 6 * * *") // 매일 06시 00분에 실행
-    public void fetchChannelInfo() {
-        List<User> users = userService.findAllUsers();
-        for (User user : users) {
-            String channelId = user.getChannelId();
-            fetchChannelInfoService.fetchAndSaveAsync(channelId, user.getId());
-        }
-        log.info("스케줄러: 전체 사용자 채널 정보 업데이트 완료");
-    }
-
-    // 모든 VideoMeta 업데이트(제한없이)
-    @Scheduled(cron = "0 1 6 * * *")
-    public void fetchVideoMetaAll() {
-        // 1. 모든 사용자 조회
-        List<User> users = userService.findAllUsers();
-
-        // 2. 사용자별로 영상 메타 처리
-        for (User user : users) {
-            Long userId = user.getId();
-            String channelId = user.getChannelId();
-
-            List<Long> videoIdList = videoInterface.findVideoIdsByUserId(userId);
-
-            if (videoIdList.isEmpty()) {
-                continue;
-            }
-
-            // 채널 ID → 구독자 수 조회
-            Long subscriber = notSyncService.getSubscriberCount(channelId);
-
-            // 비디오 메타 정보 저장
-            fetchVideoMetaService.fetchVideosMetaAsync(videoIdList, subscriber);
-        }
-
-        log.info("자동 영상 메타 정보 업데이트 완료");
-    }
-
-    // 모든 유저의 새로운 영상 저장
-    @Scheduled(cron = "0 2 6 * * ?") // 매일 6시에 2분에 실행
-    public void fetchVideoAfter() {
-        List<User> users = userService.findAllUsers();
-        for (User user : users) {
-            String channelId = user.getChannelId();
-            LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
-            fetchVideoService.fetchVideosByDate(channelId, user.getId(), oneDayAgo);
-        }
-        log.info("자동 영상 정보 업데이트 완료");
-    }
-
-    // 새로운 user가 추가될때 모든 영상과 댓글 수집  !!주의!! 단일서버에서만 잘 동작함. 여러 서버에서 동작하려면 db에 max_id 저장해야함
-    @Scheduled(fixedDelay = 5000)   //5초마다 실행
-    public void detectNewUserAndFetchComments() {
-        long lastMaxId = readLastMaxId();
-        long currentMaxId = userService.maxId();
-
-        System.out.println("lastMaxId : " + lastMaxId + "  currentMaxId : " + currentMaxId);
-
-        if (currentMaxId > lastMaxId) {
-            log.info("새로운 유저 감지! lastMaxId={}, currentMaxId={}", lastMaxId, currentMaxId);
-
-            List<User> users = userService.getGreaterThan(lastMaxId);
-            if (users.isEmpty()) {
-                log.warn("userId={} 보다 큰 수를 가진 유저가 없습니다.", lastMaxId);
-
-            } else {
-                for (User user : users) {
-                    String channelId = notSyncService.getChannelId(user.getChannelName());
-                    String channelImg = notSyncService.getChannelImg(user.getChannelName());
-
-                    user.setChannelId(channelId);
-                    user.setChannel_img(channelImg);
-                    Long savedId = userService.updateUser(user);
-                    System.out.println("update userId : " + savedId);
-
-                    fetchVideoService.fetchVideosInit(user.getChannelId(), user.getId());
-                }
-            }
-
-            List<Video> videos = videoInterface.findAllByUserIdGreaterThan(lastMaxId);
-            for (Video video : videos) {
-                fetchVideoCommentService.fetchVideoCommentsAsync(video.getId());
-            }
-
-            // 처리 완료 후 maxId 파일에 저장
-            writeLastMaxId(currentMaxId);
-        } else {
-            log.debug("새 유저 없음. lastMaxId={}, currentMaxId={}", lastMaxId, currentMaxId);
-        }
-    }
+//    // 모든 user의 channelInfo 업데이트
+//    @Scheduled(cron = "0 0 6 * * *") // 매일 06시 00분에 실행
+//    public void fetchChannelInfo() {
+//        List<User> users = userService.findAllUsers();
+//        for (User user : users) {
+//            String channelId = user.getChannelId();
+//            fetchChannelInfoService.fetchAndSaveAsync(channelId, user.getId());
+//        }
+//        log.info("스케줄러: 전체 사용자 채널 정보 업데이트 완료");
+//    }
+//
+//    // 모든 VideoMeta 업데이트(제한없이)
+//    @Scheduled(cron = "0 1 6 * * *")
+//    public void fetchVideoMetaAll() {
+//        // 1. 모든 사용자 조회
+//        List<User> users = userService.findAllUsers();
+//
+//        // 2. 사용자별로 영상 메타 처리
+//        for (User user : users) {
+//            Long userId = user.getId();
+//            String channelId = user.getChannelId();
+//
+//            List<Long> videoIdList = videoInterface.findVideoIdsByUserId(userId);
+//
+//            if (videoIdList.isEmpty()) {
+//                continue;
+//            }
+//
+//            // 채널 ID → 구독자 수 조회
+//            Long subscriber = notSyncService.getSubscriberCount(channelId);
+//
+//            // 비디오 메타 정보 저장
+//            fetchVideoMetaService.fetchVideosMetaAsync(videoIdList, subscriber);
+//        }
+//
+//        log.info("자동 영상 메타 정보 업데이트 완료");
+//    }
+//
+//    // 모든 유저의 새로운 영상 저장
+//    @Scheduled(cron = "0 2 6 * * ?") // 매일 6시에 2분에 실행
+//    public void fetchVideoAfter() {
+//        List<User> users = userService.findAllUsers();
+//        for (User user : users) {
+//            String channelId = user.getChannelId();
+//            LocalDateTime oneDayAgo = LocalDateTime.now().minusDays(1);
+//            fetchVideoService.fetchVideosByDate(channelId, user.getId(), oneDayAgo);
+//        }
+//        log.info("자동 영상 정보 업데이트 완료");
+//    }
+//
+//    // 새로운 user가 추가될때 모든 영상과 댓글 수집  !!주의!! 단일서버에서만 잘 동작함. 여러 서버에서 동작하려면 db에 max_id 저장해야함
+//    @Scheduled(fixedDelay = 5000)   //5초마다 실행
+//    public void detectNewUserAndFetchComments() {
+//        long lastMaxId = readLastMaxId();
+//        long currentMaxId = userService.maxId();
+//
+//        System.out.println("lastMaxId : " + lastMaxId + "  currentMaxId : " + currentMaxId);
+//
+//        if (currentMaxId > lastMaxId) {
+//            log.info("새로운 유저 감지! lastMaxId={}, currentMaxId={}", lastMaxId, currentMaxId);
+//
+//            List<User> users = userService.getGreaterThan(lastMaxId);
+//            if (users.isEmpty()) {
+//                log.warn("userId={} 보다 큰 수를 가진 유저가 없습니다.", lastMaxId);
+//
+//            } else {
+//                for (User user : users) {
+//                    String channelId = notSyncService.getChannelId(user.getChannelName());
+//                    String channelImg = notSyncService.getChannelImg(user.getChannelName());
+//
+//                    user.setChannelId(channelId);
+//                    user.setChannel_img(channelImg);
+//                    Long savedId = userService.updateUser(user);
+//                    System.out.println("update userId : " + savedId);
+//
+//                    fetchVideoService.fetchVideosInit(user.getChannelId(), user.getId());
+//                }
+//            }
+//
+//            List<Video> videos = videoInterface.findAllByUserIdGreaterThan(lastMaxId);
+//            for (Video video : videos) {
+//                fetchVideoCommentService.fetchVideoCommentsAsync(video.getId());
+//            }
+//
+//            // 처리 완료 후 maxId 파일에 저장
+//            writeLastMaxId(currentMaxId);
+//        } else {
+//            log.debug("새 유저 없음. lastMaxId={}, currentMaxId={}", lastMaxId, currentMaxId);
+//        }
+//    }
 
     // 모든 영상의 새로운 댓글 수집하는 코드(제한 없음)
-    @Scheduled(cron = "0 3 6 * * *")
-//@Scheduled(cron = "0 13 * * * *")
-    public void fetchRecentVideoComments() {
-        List<Video> videos = videoInterface.findAll();
-
-        for (Video video : videos) {
-            // 각 영상의 가장 최신 댓글의 날짜 가져옴
-            LocalDateTime date = videoCommentInterface.findLatestCommentDate(video.getId());
-
-            log.info("최근 영상 댓글 처리 시작 - title={}, latesUploadDate={}", video.getTitle(), date);
-
-            fetchVideoCommentService.fetchCurrentVideoCommentsAsync(video.getId(), date);
-        }
-
-        log.info("스케줄 완료 - 총 {}개의 영상 처리", videos.size());
-    }
-
-    // 모든 비디오 댓글의 긍부정 키워드 추출하는 코드 -> 이미 있으면 업데이트함
-    @Scheduled(cron = "0 5 6 * * *")
-    public void fetchPositiveComment() {
-        List<Long> videoIds = videoInterface.findVideoIds();
-        for (Long videoId : videoIds) {
-            sentiService.getAndSavePositiveWords(videoId);
-            log.info("videoId={} 긍부정 키워드 추출", videoId);
-        }
-    }
+//    @Scheduled(cron = "0 3 6 * * *")
+//    public void fetchRecentVideoComments() {
+//        List<Video> videos = videoInterface.findAll();
+//
+//        for (Video video : videos) {
+//            // 각 영상의 가장 최신 댓글의 날짜 가져옴
+//            LocalDateTime date = videoCommentInterface.findLatestCommentDate(video.getId());
+//
+//            log.info("최근 영상 댓글 처리 시작 - title={}, latesUploadDate={}", video.getTitle(), date);
+//
+//            fetchVideoCommentService.fetchCurrentVideoCommentsAsync(video.getId(), date);
+//        }
+//
+//        log.info("스케줄 완료 - 총 {}개의 영상 처리", videos.size());
+//    }
+//
+//    // 모든 비디오 댓글의 긍부정 키워드 추출하는 코드 -> 이미 있으면 업데이트함
+//    @Scheduled(cron = "0 5 6 * * *")
+//    public void fetchPositiveComment() {
+//        List<Long> videoIds = videoInterface.findVideoIds();
+//        for (Long videoId : videoIds) {
+//            sentiService.getAndSavePositiveWords(videoId);
+//            log.info("videoId={} 긍부정 키워드 추출", videoId);
+//        }
+//    }
 
 
     /**

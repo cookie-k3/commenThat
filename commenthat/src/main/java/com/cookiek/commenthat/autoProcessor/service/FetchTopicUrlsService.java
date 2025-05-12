@@ -6,6 +6,7 @@ import com.cookiek.commenthat.domain.Contents;
 import com.cookiek.commenthat.domain.Reference;
 import com.cookiek.commenthat.repository.ContentsInterface;
 import com.cookiek.commenthat.repository.ReferenceInterface;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -50,42 +51,66 @@ public class FetchTopicUrlsService {
         Contents contents = contentsInterface.findById(contentsId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 contentsId: " + contentsId));
 
-        String topic = contents.getTopic();
+        List<String> topicList = List.of();
+        String topics = contents.getTopic();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            topicList = objectMapper.readValue(topics, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         String channelId = contents.getUser().getChannelId();
 
-        List<ReferenceDto> referenceDtos = fetchYoutubeVideoDetails(topic, 4, channelId);
+        for (int i = 0; i< topicList.toArray().length; i++) {
+            List<ReferenceDto> referenceDtos = fetchYoutubeVideoDetails(topicList.get(i), 4, channelId);
+            Long idx = Long.valueOf(i);
+            try {
+                // Dto → Entity 변환
+                List<Reference> references = referenceDtos.stream()
+                        .map(dto -> {
+                            Reference ref = new Reference();
+                            ref.setContents(contents);
+                            ref.setTitle(dto.getTitle());
+                            ref.setUrl(dto.getUrl());
+                            ref.setViews(dto.getViews());
+                            ref.setImg(dto.getImg());
+                            ref.setIdx(idx);
+                            return ref;
+                        })
+                        .toList();
 
+                referenceInterface.saveAll(references);
+
+                log.info("contentsId {}의 URL 업데이트 완료", contentsId);
+            } catch (Exception e) {
+                log.error("contentsId {}의 URL JSON 변환 실패: {}", contentsId, e.getMessage());
+            }
+        }
+
+    }
+    private boolean isShorts(String isoDuration) {
         try {
-            // Dto → Entity 변환
-            List<Reference> references = referenceDtos.stream()
-                    .map(dto -> {
-                        Reference ref = new Reference();
-                        ref.setContents(contents);
-                        ref.setTitle(dto.getTitle());
-                        ref.setUrl(dto.getUrl());
-                        ref.setViews(dto.getViews());
-                        ref.setImg(dto.getImg());
-                        return ref;
-                    })
-                    .toList();
-
-            referenceInterface.saveAll(references);
-
-            log.info("contentsId {}의 URL 업데이트 완료", contentsId);
+            java.time.Duration duration = java.time.Duration.parse(isoDuration); // 예: PT1M30S
+            return duration.getSeconds() <= 120; // 2분 이하이면 쇼츠
         } catch (Exception e) {
-            log.error("contentsId {}의 URL JSON 변환 실패: {}", contentsId, e.getMessage());
+            log.warn("duration 파싱 실패: {}", isoDuration);
+            return false;
         }
     }
+
 
     public List<ReferenceDto> fetchYoutubeVideoDetails(String topic, int maxResults, String excludedChannelId) {
 
         List<ReferenceDto> referenceDtos = new ArrayList<>();
-        Set<String> seenVideoIds = new HashSet<>(); // 이미 본 videoId 기록용
+        Set<String> seenVideoIds = new HashSet<>();
 
         for (String apiKey : apiKeys) {
             String searchApiUrl = "https://www.googleapis.com/youtube/v3/search"
-                    + "?part=snippet&type=video&maxResults=" + (maxResults * 2) // 여유 있게 요청
-                    + "&q=" + topic + "&key=" + apiKey;
+                    + "?part=snippet&type=video&maxResults=" + (maxResults * 4) // 🔥 더 많이 요청
+                    + "&q=" + topic
+                    + "&order=relevance"
+                    + "&key=" + apiKey;
 
             try {
                 String response = restTemplate.getForObject(searchApiUrl, String.class);
@@ -113,8 +138,11 @@ public class FetchTopicUrlsService {
                         }
                     }
 
+                    if (videoIds.isEmpty()) continue;
+
                     String videosApiUrl = "https://www.googleapis.com/youtube/v3/videos"
-                            + "?part=snippet,statistics&id=" + String.join(",", videoIds)
+                            + "?part=snippet,statistics,contentDetails" // 🔥 duration 필드 포함
+                            + "&id=" + String.join(",", videoIds)
                             + "&key=" + apiKey;
 
                     String videosResponse = restTemplate.getForObject(videosApiUrl, String.class);
@@ -139,7 +167,14 @@ public class FetchTopicUrlsService {
                             if (seenVideoIds.contains(videoId)) {
                                 continue;
                             }
-                            seenVideoIds.add(videoId); // 새 videoId 기록
+
+                            // 쇼츠인지 확인하고 제외
+                            String isoDuration = videoItem.path("contentDetails").path("duration").asText();
+                            if (isShorts(isoDuration)) {
+                                continue;
+                            }
+
+                            seenVideoIds.add(videoId);
 
                             String title = videoItem.path("snippet").path("title").asText();
                             Long viewCount = videoItem.path("statistics").path("viewCount").asLong();
@@ -174,7 +209,7 @@ public class FetchTopicUrlsService {
             }
 
             if (referenceDtos.size() >= maxResults) {
-                break; // 성공했으면 종료
+                break;
             }
         }
 
@@ -184,8 +219,6 @@ public class FetchTopicUrlsService {
 
         return referenceDtos;
     }
-
-
-
+    
 
 }

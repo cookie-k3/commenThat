@@ -18,6 +18,7 @@ public class Reference {
     private String title;
     private Long views;
     private String img;
+    private Long idx;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contents_id")

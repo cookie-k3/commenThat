@@ -23,16 +23,8 @@ public class Contents {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-//    @Column(name = "video_period")
-//    private LocalDate videoPeriod;
-//
-//    @Lob
-//    @Column(name = "comment_analysis", columnDefinition = "TEXT")
-//    private String commentAnalysis;
-//
-//    @Lob
-//    @Column(name = "channel_analysis", columnDefinition = "TEXT")
-//    private String channelAnalysis;
+    @Column(name = "video_period")
+    private String videoPeriod;
 
     @Lob
     @Column(name = "topic_rec", columnDefinition = "TEXT")
@@ -40,15 +32,34 @@ public class Contents {
 
     private String topic;
 
-//    @Lob
-//    @Column(name = "urls", columnDefinition = "TEXT")
-//    private String urls;
+    @Lob
+    @Column(name = "topic_analysis", columnDefinition = "TEXT")
+    private String topicAnalysis;
 
-    @OneToMany(mappedBy = "contents", cascade = CascadeType.ALL)
-    private List<Reference> references = new ArrayList<>();
+    @Lob
+    @Column(name = "top_view_video", columnDefinition = "TEXT")
+    private String topViewVideo;
+
+    @Lob
+    @Column(name = "top_positive_video", columnDefinition = "TEXT")
+    private String topPositiveVideo;
+
+    @Lob
+    @Column(name = "top_negative_video", columnDefinition = "TEXT")
+    private String topNegativeVideo;
+
+    @Lob
+    @Column(name = "positive_keywords", columnDefinition = "TEXT")
+    private String positiveKeywords;
+
+    @Lob
+    @Column(name = "top_categories", columnDefinition = "TEXT")
+    private String topCategories;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "contents", cascade = CascadeType.ALL)
+    private List<Reference> references = new ArrayList<>();
 }
