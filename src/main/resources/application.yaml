@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/commenthat?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3307/commenthat?serverTimezone=Asia/Seoul&characterEncoding=UTF-8  # UTC → Asia/Seoul 로 변경
     username: root
     password: dabin1234
   jpa:
@@ -17,8 +17,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-
+  jackson:
+    time-zone: Asia/Seoul  # JSON 직렬화/역직렬화 시간대를 KST로 설정
 
 logging:
   level:
@@ -27,4 +27,3 @@ logging:
     #    org.hibernate.transaction: debug
     org.hibernate.type: trace
     org.hibernate.orm.jdbc.bind: trace
-
