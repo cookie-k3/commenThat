@@ -36,13 +36,13 @@ const LeftHeader = () => {
         {/* 중앙 정렬용 래퍼 */}
         <div className="menu-section">
           <p className="section-title">채널 분석</p>
-          <button onClick={() => navigate("/subscribers")}>
-            <img src={subscriberIcon} alt="구독자" className="icon" />
-            구독자
-          </button>
           <button onClick={() => navigate("/views")}>
+            <img src={subscriberIcon} alt="구독자" className="icon" />
+            채널 조회수
+          </button>
+          <button onClick={() => navigate("/views/by-video")}>
             <img src={viewIcon} alt="조회수" className="icon" />
-            조회수
+            영상별 조회수
           </button>
         </div>
         <div className="menu-section">

@@ -121,12 +121,32 @@ const Reputation = () => {
     // 점수 계산 기준 메시지 `점수는 1등 5점, 2등 3점, 3등 1점으로 계산됩니다.`
     const scoreGuide = `점수는 시스템의 기준에 따라 계산됩니다.`;
 
+    // 주격 조사 '이/가' 자동 판별 함수 추가
+    const getJosa = (word) => {
+      if (!word || word.length === 0) return "이";
+
+      const lastChar = word[word.length - 1];
+      const code = lastChar.charCodeAt(0);
+
+      // 한글인지 확인: 한글 유니코드 범위는 AC00 ~ D7A3
+      const isHangul = code >= 0xac00 && code <= 0xd7a3;
+
+      if (!isHangul) {
+        // 한글이 아니면 무조건 '가' 사용
+        return "가";
+      }
+
+      // 받침 유무로 조사 결정
+      const jong = (code - 44032) % 28;
+      return jong === 0 ? "가" : "이";
+    };
+
     let explanation = "";
 
     if (tied.length > 1) {
       // 동점자 있을 경우 메시지
-      const names = tied.map((i) => i.user.channelName).join(", ");
-      explanation = `이달의 채널은 우선순위(긍정 > 조회수 > 성실)에 따라 ${sorted[0].user.channelName}이(가) 선택되었습니다.`;
+      const josa = getJosa(sorted[0].user.channelName); // 조사 자동 판별
+      explanation = `이달의 채널은 우선순위(긍정 > 조회수 > 성실)에 따라 ${sorted[0].user.channelName}${josa} 선택되었습니다.`; // 주격 조사 적용
     } else {
       // 동점자 없을 경우 메시지
       explanation = `이달의 채널은 ${sorted[0].user.channelName}이며, ${scoreGuide}`;
@@ -135,7 +155,6 @@ const Reputation = () => {
     // 선택된 사용자와 설명 반환
     return { winner: sorted[0]?.user ?? null, explanation };
   };
-
   // 각 부문별 랭킹 렌더링
   const renderRanking = (data, type) => {
     if (!Array.isArray(data) || data.length === 0) {

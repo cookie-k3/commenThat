@@ -5,6 +5,7 @@
   margin-left: -240px; /* 좌측 sidebar 만큼 이동 */
   background-color: white;
   padding: 10px 40px;
+  min-height: 50px; /* 또는 원하는 높이 예: 64px */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: flex-end; /* 오른쪽 정렬 */

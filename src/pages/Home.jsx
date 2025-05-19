@@ -229,7 +229,9 @@ const Home = () => {
                         {
                           label: "",
                           data: views.slice(-7).map((d) => d.totalViews),
+                          // borderColor: "rgba(75, 192, 192, 1)",
                           borderColor: "rgba(255, 99, 132, 1)",
+                          // backgroundColor: "rgba(75, 192, 192, 0.2)",
                           backgroundColor: "rgba(255, 99, 132, 0.1)",
                           fill: true,
                           tension: 0.3,
@@ -309,20 +311,16 @@ const Home = () => {
                           key={`cat-${i}`}
                           fill={
                             [
-                              "#F8C8C4",
-                              "#AED9E0",
-                              "#E6B8B7",
-                              "#C1BBDD",
-                              "#FFF2AC",
-                              "#F6C1B4",
-                              "#AED9E0",
-                              "#B0C9E8",
-                              "#F8C8C4",
-                              "#B2E2C2",
-                              "#F9D5C2",
-                              "#BFD7EA",
-                              "#A0A0A0",
-                              "#E0E0E0",
+                              "#FAD6E5", // 연핑크 (붉은 느낌 약함)
+                              "#AED9E0", // 연하늘 (파스텔 블루)
+                              "#B2E2C2", // 연민트
+                              "#FFF2AC", // 연노랑
+                              "#C1BBDD", // 연보라
+                              "#A2D2FF", // 맑은 하늘색
+                              "#FFC8A2", // 살구색
+                              "#B5EAD7", // 민트+연녹색
+                              "#FFDAC1", // 연살구핑크
+                              "#E2F0CB", // 연한 연두
                             ][i % 10]
                           }
                         />
@@ -383,18 +381,15 @@ const Home = () => {
             </div>
 
             {/* 콘텐츠 추천 카드 */}
-            {/* 콘텐츠 추천 카드 */}
             <div
               className="card clickable"
               onClick={() => navigate("/recommend")}
             >
-              <h3 style={{ marginBottom: "20px" }}>콘텐츠 추천</h3>
+              <h3 style={{ marginBottom: "0px" }}>콘텐츠 추천</h3>
 
               {summary && summary.topViewVideo && (
                 <div className="mini-summary-box">
-                  <h4 style={{ marginBottom: "4px" }}>
-                    한 달간 최고 조회수 영상
-                  </h4>
+                  <div>한 달간 최고 조회수 영상</div>
                   <div className="mini-video-row">
                     <img
                       src={JSON.parse(summary.topViewVideo).thumbnail}
@@ -402,27 +397,28 @@ const Home = () => {
                       className="mini-thumbnail"
                     />
                     <div>
-                      <p className="mini-title">
+                      <div className="mini-title">
                         {JSON.parse(summary.topViewVideo).title}
-                      </p>
-                      <p style={{ fontSize: "13px", color: "#555" }}>
+                      </div>
+                      <div style={{ fontSize: "13px", color: "#555" }}>
                         조회수:{" "}
                         {Number(
                           JSON.parse(summary.topViewVideo).views
                         ).toLocaleString()}
                         회
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              <h4 className="recommend-label">추천 키워드</h4>
+              <div className="recommend-label">추천 키워드</div>
+
               {topics.length === 0 ? (
-                <p style={{ color: "#999", fontSize: "14px" }}>데이터 없음</p>
+                <div className="no-topic">데이터 없음</div>
               ) : (
                 <div className="horizontal-topic-list">
-                  {topics.slice(0, 4).map((topic, idx) => (
+                  {topics.slice(0, 2).map((topic, idx) => (
                     <div key={idx} className="horizontal-topic-item">
                       <span className="rank-circle">{idx + 1}</span>
                       <span className="rank-label">{topic}</span>
