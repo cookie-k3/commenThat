@@ -6,6 +6,19 @@ import TopBar from "../components/TopBar";
 import "../components/ContentRecommend.css";
 import { useNavigate } from "react-router-dom";
 
+const categoryKeyMap = {
+  joy: "즐거움",
+  supportive: "응원",
+  suggestion: "요청",
+  hate: "혐오",
+  question: "질문",
+  praise: "칭찬",
+  sympathy: "공감",
+  congratulations: "축하",
+  concern: "걱정",
+  other: "기타",
+};
+
 const ContentRecommend = () => {
   const { user } = useAuth();
   const [summaryData, setSummaryData] = useState({});
@@ -132,9 +145,11 @@ const ContentRecommend = () => {
                 {topCategories.map((cat, idx) => {
                   const emojis = ["🏆", "🥈", "🥉"];
                   const emoji = emojis[idx] || `${idx + 1}.`;
+                  const koreanCategory = categoryKeyMap[cat] || cat; // 없을 경우 원본 유지
                   return (
                     <li key={idx} data-rank={idx + 1}>
-                      <span className="rank-emoji">{emoji}</span> {cat}
+                      <span className="rank-emoji">{emoji}</span>{" "}
+                      {koreanCategory}
                     </li>
                   );
                 })}

@@ -266,6 +266,9 @@ white-space: nowrap; /* 내부 텍스트 줄바꿈 방지 */
   font-weight: 500;
   color: #333;
   margin-bottom: 2px;
+
+  white-space: nowrap; /* 줄바꿈 금지 */
+  max-width: 200px; /* 가로 너비 제한 (상황에 맞게 조절) */
 }
 
 /* 추천 키워드 - 가로 배치용 */
@@ -275,7 +278,8 @@ white-space: nowrap; /* 내부 텍스트 줄바꿈 방지 */
   gap: 20px;
   margin-top: -10px; /*추천 키워드랑 2개 키워드 사이 여백*/
   margin-bottom: 35px;
-  flex-wrap: wrap; /* 화면 줄어들면 줄바꿈 */
+  /* flex-wrap: wrap; 화면 줄어들면 줄바꿈  */
+  white-space: nowrap;
 }
 
 .horizontal-topic-item {
