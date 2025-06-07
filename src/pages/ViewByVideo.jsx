@@ -32,24 +32,57 @@ const ViewByVideo = () => {
   const [videoId, setVideoId] = useState(null);
   const [viewData, setViewData] = useState([]);
 
+  // const handleVideoSelect = async (selectedId) => {
+  //   setVideoId(selectedId);
+
+  //   try {
+  //     const res = await axios.get(
+  //       `http://localhost:8080/api/analysis/video-views?videoId=${selectedId}`
+  //     );
+  //     const raw = res.data;
+
+  //     console.log("[서버 응답] 원본 raw 데이터:", raw);
+
+  //     // 날짜 오름차순 정렬
+  //     const sorted = [...raw].sort(
+  //       (a, b) => new Date(a.date) - new Date(b.date)
+  //     );
+  //     console.log("[정렬된 데이터]", sorted);
+
+  //     setViewData(sorted);
+  //   } catch (err) {
+  //     console.error("영상별 조회수 데이터 로딩 실패:", err);
+  //   }
+  // };
+
   const handleVideoSelect = async (selectedId) => {
     setVideoId(selectedId);
+
+    const startTime = performance.now(); // 요청 시작 시간 기록
 
     try {
       const res = await axios.get(
         `http://localhost:8080/api/analysis/video-views?videoId=${selectedId}`
       );
-      const raw = res.data;
 
+      const endTime = performance.now(); // 요청 종료 시간 기록
+      const responseTime = (endTime - startTime).toFixed(2); // 소수점 2자리로 표시
+      console.log(`조회수 API 응답 시간: ${responseTime}ms`);
+
+      const raw = res.data;
       console.log("[서버 응답] 원본 raw 데이터:", raw);
 
-      // 날짜 오름차순 정렬
       const sorted = [...raw].sort(
         (a, b) => new Date(a.date) - new Date(b.date)
       );
       console.log("[정렬된 데이터]", sorted);
 
-      setViewData(sorted);
+      // 날짜 기준 중복 제거 (가장 마지막 항목만 남김)
+      const deduped = Array.from(
+        new Map(sorted.map((item) => [item.date, item])).values()
+      );
+
+      setViewData(deduped); // 기존: setViewData(sorted);
     } catch (err) {
       console.error("영상별 조회수 데이터 로딩 실패:", err);
     }

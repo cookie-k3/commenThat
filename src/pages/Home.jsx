@@ -83,26 +83,37 @@ const Home = () => {
     };
     if (user?.userId) fetchViews();
   }, [user]);
+
+  //가장 최근 영상부터 조회해서 7일치 조회수 데이터가 있는 영상 선택
   useEffect(() => {
     const fetchVideoTrend = async () => {
       try {
-        // 1. 최근 영상 ID 조회
         const res1 = await axios.get(
-          `http://localhost:8080/api/comments/senti-chart-init?userId=${user.userId}`
-        );
-        const recentVideoId = res1.data.videoId;
-
-        if (!recentVideoId) return;
-
-        // 2. 해당 영상에 대한 조회수 추이 조회
-        const res2 = await axios.get(
-          `http://localhost:8080/api/analysis/video-views?videoId=${recentVideoId}`
+          `http://localhost:8080/api/analysis/view-chart-init?userId=${user.userId}`
         );
 
-        const sorted = [...res2.data].sort(
-          (a, b) => new Date(a.date) - new Date(b.date)
-        );
-        setVideoTrendData(sorted.slice(-7)); // 최근 7일치만
+        const videoList = res1.data?.data?.videoDtoList ?? [];
+        console.log("영상 목록:", videoList);
+
+        for (const video of videoList) {
+          const videoId = video.videoId;
+          const title = video.videoTitle;
+
+          const res2 = await axios.get(
+            `http://localhost:8080/api/analysis/video-views?videoId=${videoId}`
+          );
+
+          const sorted = [...res2.data].sort(
+            (a, b) => new Date(a.date) - new Date(b.date)
+          );
+
+          if (sorted.length >= 7) {
+            console.log("선택된 대표 영상:", title);
+            console.log("[대표 영상 그래프] 최종 데이터", sorted.slice(-7));
+            setVideoTrendData(sorted.slice(-7));
+            break; // 첫 번째로 조건 만족하는 영상만 사용
+          }
+        }
       } catch (e) {
         console.error("영상별 조회수 미리보기 로딩 실패:", e);
       }
@@ -111,28 +122,57 @@ const Home = () => {
     if (user?.userId) fetchVideoTrend();
   }, [user]);
 
-  useEffect(() => {
-    const fetchCategory = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:8080/api/comments/category-chart-init?userId=${user.userId}`
-        );
-        const stat = res.data.data.statCountDto;
-        if (!stat) {
-          setCategoryData([]);
-          return;
-        }
-        const parsed = Object.entries(stat).map(([key, value]) => ({
-          name: key,
-          value: Number(value),
-        }));
-        setCategoryData(parsed);
-      } catch (err) {
-        console.error("범주 데이터 로딩 실패:", err);
-      }
-    };
-    if (user?.userId) fetchCategory();
-  }, [user]);
+  //기존 영상별조회수 카드 부분 코드
+  // useEffect(() => {
+  //   const fetchVideoTrend = async () => {
+  //     try {
+  //       // 1. 최근 영상 ID 조회
+  //       const res1 = await axios.get(
+  //         `http://localhost:8080/api/comments/senti-chart-init?userId=${user.userId}`
+  //       );
+  //       const recentVideoId = res1.data.videoId;
+
+  //       if (!recentVideoId) return;
+
+  //       // 2. 해당 영상에 대한 조회수 추이 조회
+  //       const res2 = await axios.get(
+  //         `http://localhost:8080/api/analysis/video-views?videoId=${recentVideoId}`
+  //       );
+
+  //       const sorted = [...res2.data].sort(
+  //         (a, b) => new Date(a.date) - new Date(b.date)
+  //       );
+  //       setVideoTrendData(sorted.slice(-7)); // 최근 7일치만
+  //     } catch (e) {
+  //       console.error("영상별 조회수 미리보기 로딩 실패:", e);
+  //     }
+  //   };
+
+  //   if (user?.userId) fetchVideoTrend();
+  // }, [user]);
+
+  // useEffect(() => {
+  //   const fetchCategory = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         `http://localhost:8080/api/comments/category-chart-init?userId=${user.userId}`
+  //       );
+  //       const stat = res.data.data.statCountDto;
+  //       if (!stat) {
+  //         setCategoryData([]);
+  //         return;
+  //       }
+  //       const parsed = Object.entries(stat).map(([key, value]) => ({
+  //         name: key,
+  //         value: Number(value),
+  //       }));
+  //       setCategoryData(parsed);
+  //     } catch (err) {
+  //       console.error("범주 데이터 로딩 실패:", err);
+  //     }
+  //   };
+  //   if (user?.userId) fetchCategory();
+  // }, [user]);
 
   useEffect(() => {
     const fetchSentiment = async () => {

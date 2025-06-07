@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "./LeftHeader.css";
+import "../components/LeftHeader.css";
 import logo from "../assets/logo.png";
 import subscriberIcon from "../assets/subscriber.png";
 import viewIcon from "../assets/view.png";
@@ -64,6 +64,11 @@ const LeftHeader = () => {
           </button>
         </div>
       </div>
+
+      {/* 좌측 하단 "메인으로 가기" 버튼 */}
+      <button className="main-button" onClick={() => navigate("/")}>
+        메인으로 가기
+      </button>
     </div>
   );
 };

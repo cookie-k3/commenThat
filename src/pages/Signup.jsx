@@ -33,8 +33,14 @@ const Signup = () => {
       newErrors.email = "올바른 이메일 형식이 아닙니다.";
 
     if (!password) newErrors.password = "비밀번호를 입력해주세요.";
-    else if (password.length < 8)
-      newErrors.password = "비밀번호는 8자 이상이어야 합니다.";
+    else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(password)
+    ) {
+      newErrors.password =
+        "비밀번호는 8자 이상이며, 대소문자/숫자/특수문자를 모두 포함해야 합니다.";
+    }
+    // else if (password.length < 8)
+    //   newErrors.password = "비밀번호는 8자 이상이어야 합니다.";
 
     return newErrors;
   };
@@ -61,7 +67,7 @@ const Signup = () => {
       );
 
       alert(response.data.message); // 백엔드 json에서 message만 추출 ex) 회원가입 완료!
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       if (
         error.response?.status === 400 &&
