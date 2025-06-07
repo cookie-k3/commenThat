@@ -122,6 +122,99 @@ const Home = () => {
     if (user?.userId) fetchVideoTrend();
   }, [user]);
 
+  // 가장 최근 영상 목록 중에서 카테고리(statCountDto) 값이 모두 0이 아닌 첫 번째 영상을 찾아 차트에 표시
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const res1 = await axios.get(
+          `http://localhost:8080/api/analysis/view-chart-init?userId=${user.userId}`
+        );
+        const videoList = res1.data?.data?.videoDtoList ?? [];
+        console.log("전체 영상 목록 확인:", videoList);
+
+        for (const video of videoList) {
+          try {
+            const res = await axios.get(
+              `http://localhost:8080/api/comments/category-chart-videoid?videoId=${video.videoId}`
+            );
+
+            console.log("[범주화] 응답:", res.data);
+
+            const stat = res.data?.statCountDto; // statCountDto 직접 접근
+            console.log("[범주화] statCountDto:", stat);
+
+            if (!stat) {
+              console.log(" statCountDto가 존재하지 않습니다");
+              continue;
+            }
+
+            const values = Object.values(stat).map(Number);
+            console.log("[범주화] 값 배열:", values);
+
+            // 하나라도 0보다 크면 차트로 표시
+            if (values.some((val) => val > 0)) {
+              const parsed = Object.entries(stat).map(([key, value]) => ({
+                name: key,
+                value: Number(value),
+              }));
+              setCategoryData(parsed);
+              console.log(" 범주화 분석 사용된 영상:", video.videoTitle);
+              break;
+            } else {
+              console.log(
+                ` ${video.videoTitle} 영상은 카테고리 데이터가 모두 0`
+              );
+            }
+          } catch (innerErr) {
+            console.error(
+              ` ${video.videoTitle} 영상 처리 중 에러 발생:`,
+              innerErr
+            );
+          }
+        }
+      } catch (err) {
+        console.error("범주 데이터 로딩 실패:", err);
+      }
+    };
+
+    if (user?.userId) fetchCategory();
+  }, [user]);
+
+  useEffect(() => {
+    console.log("카테고리 데이터:", categoryData);
+  }, [categoryData]);
+
+  // 영상 목록 중 긍정+부정 댓글 수의 합이 0보다 큰 첫 번째 영상을 선택하여 도넛차트에 표시
+  useEffect(() => {
+    const fetchSentiment = async () => {
+      try {
+        const res1 = await axios.get(
+          `http://localhost:8080/api/analysis/view-chart-init?userId=${user.userId}`
+        );
+        const videoList = res1.data?.data?.videoDtoList ?? [];
+
+        for (const video of videoList) {
+          const res = await axios.get(
+            `http://localhost:8080/api/comments/senti-chart-videoid?videoId=${video.videoId}` // ✅ 경로 수정
+          );
+          const data = res.data;
+
+          if (data.positiveCount + data.negativeCount > 0) {
+            setSentimentData([
+              { name: "부정", value: data.negativeCount },
+              { name: "긍정", value: data.positiveCount },
+            ]);
+            console.log("긍부정 분석 사용된 영상:", video.videoTitle);
+            break;
+          }
+        }
+      } catch (err) {
+        console.error("긍부정 데이터 로딩 실패:", err);
+      }
+    };
+    if (user?.userId) fetchSentiment();
+  }, [user]);
+
   //기존 영상별조회수 카드 부분 코드
   // useEffect(() => {
   //   const fetchVideoTrend = async () => {
@@ -174,23 +267,23 @@ const Home = () => {
   //   if (user?.userId) fetchCategory();
   // }, [user]);
 
-  useEffect(() => {
-    const fetchSentiment = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:8080/api/comments/senti-chart-init?userId=${user.userId}`
-        );
-        const data = res.data;
-        setSentimentData([
-          { name: "부정", value: data.negativeCount },
-          { name: "긍정", value: data.positiveCount },
-        ]);
-      } catch (err) {
-        console.error("긍부정 데이터 로딩 실패:", err);
-      }
-    };
-    if (user?.userId) fetchSentiment();
-  }, [user]);
+  // useEffect(() => {
+  //   const fetchSentiment = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         `http://localhost:8080/api/comments/senti-chart-init?userId=${user.userId}`
+  //       );
+  //       const data = res.data;
+  //       setSentimentData([
+  //         { name: "부정", value: data.negativeCount },
+  //         { name: "긍정", value: data.positiveCount },
+  //       ]);
+  //     } catch (err) {
+  //       console.error("긍부정 데이터 로딩 실패:", err);
+  //     }
+  //   };
+  //   if (user?.userId) fetchSentiment();
+  // }, [user]);
 
   useEffect(() => {
     const fetchTopics = async () => {
@@ -335,42 +428,63 @@ const Home = () => {
                   style={{ flex: 1, textAlign: "center" }}
                   onClick={() => navigate("/category")}
                 >
-                  <PieChart width={180} height={180}>
-                    <RePie
-                      data={categoryData
-                        .filter((d) => d.name !== "other")
-                        .map((d) => ({ name: d.name, value: d.value }))}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      dataKey="value"
-                      labelLine={false}
-                    >
-                      {categoryData.map((_, i) => (
-                        <Cell
-                          key={`cat-${i}`}
-                          fill={
-                            [
-                              "#FAD6E5", // 연핑크 (붉은 느낌 약함)
-                              "#AED9E0", // 연하늘 (파스텔 블루)
-                              "#B2E2C2", // 연민트
-                              "#FFF2AC", // 연노랑
-                              "#C1BBDD", // 연보라
-                              "#A2D2FF", // 맑은 하늘색
-                              "#FFC8A2", // 살구색
-                              "#B5EAD7", // 민트+연녹색
-                              "#FFDAC1", // 연살구핑크
-                              "#E2F0CB", // 연한 연두
-                            ][i % 10]
-                          }
-                        />
-                      ))}
-                    </RePie>
-                    <ReTooltip />
-                  </PieChart>
-                  <p style={{ fontSize: "14px", marginTop: "0.5rem" }}>
-                    댓글 범주화
-                  </p>
+                  {(() => {
+                    const filteredCategoryData = categoryData
+                      .filter((d) => d.name !== "other")
+                      .map((d) => ({ name: d.name, value: d.value }));
+
+                    return filteredCategoryData.length === 0 ? (
+                      <div
+                        style={{
+                          height: "180px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <p style={{ color: "#999", fontSize: "14px" }}>
+                          데이터 없음
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <PieChart width={180} height={180}>
+                          <RePie
+                            data={filteredCategoryData}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={80}
+                            dataKey="value"
+                            labelLine={false}
+                          >
+                            {filteredCategoryData.map((_, i) => (
+                              <Cell
+                                key={`cat-${i}`}
+                                fill={
+                                  [
+                                    "#FAD6E5", // 연핑크
+                                    "#AED9E0", // 연하늘
+                                    "#B2E2C2", // 연민트
+                                    "#FFF2AC", // 연노랑
+                                    "#C1BBDD", // 연보라
+                                    "#A2D2FF", // 맑은 하늘색
+                                    "#FFC8A2", // 살구색
+                                    "#B5EAD7", // 민트+연녹색
+                                    "#FFDAC1", // 연살구핑크
+                                    "#E2F0CB", // 연한 연두
+                                  ][i % 10]
+                                }
+                              />
+                            ))}
+                          </RePie>
+                          <ReTooltip />
+                        </PieChart>
+                        <p style={{ fontSize: "14px", marginTop: "0.5rem" }}>
+                          댓글 범주화
+                        </p>
+                      </>
+                    );
+                  })()}
                 </div>
 
                 <div
