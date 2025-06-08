@@ -26,17 +26,21 @@
 
 ---
 
-## 2. Auto Processor 명명 규칙 (콘텐츠 추천 스케줄러 등)
+## 2. Auto Processor 명명 규칙
 
-| 항목        | 명명 규칙              | 예시                              |
-|-------------|------------------------|-----------------------------------|
-| 파일/모듈명 | 소문자 + 밑줄          | `contents_scheduler.py`           |
-| 함수/변수명 | 소문자 + 밑줄          | `run_recommendation()`, `log_dir`|
-| 상수        | 대문자 + 밑줄          | `DB_CONFIG`, `RESULT_QUEUE`       |
+| 항목           | 명명 규칙                                            | 예시                                      |
+|----------------|-----------------------------------------------------|-------------------------------------------|
+| 클래스/파일명  | PascalCase                                           | `AutoProcessorController`, `FetchVideoService` |
+| 메서드명       | camelCase                                            | `getUserIdList()`, `saveStatistics()`     |
+| 변수명         | camelCase                                            | `videoId`, `channelInfoList`              |
+| Entity 필드명  | DB 컬럼명은 `snake_case`, 필드는 `camelCase`로 매핑 | DB: `video_id` → Java: `videoId`          |
+| 상수           | 대문자 + 밑줄                                        | `MAX_VIDEO_COUNT`, `SCHEDULER_LOCK_NAME`  |
+| DTO 이름       | PascalCase + 접미사 `Dto` 사용                       | `VideoCommentDto`, `ChannelInfoDto`       |
+| 패키지/폴더명  | 도메인 기반 소문자 구성                             | `controller`, `service`, `domain`, `repository` |
 
 ---
 
-## 3. Analysis Service 명명 규칙 (RabbitMQ 분석 파이프라인)
+## 3. Analysis Service 명명 규칙 
 
 | 항목        | 명명 규칙              | 예시                              |
 |-------------|------------------------|-----------------------------------|
