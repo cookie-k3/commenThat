@@ -1,0 +1,28 @@
+[2025-05-17 13:53:47] [INFO] 가져온 유저 ID 목록: [2]
+[2025-05-17 13:53:47] 콘텐츠 추천 시작: user_id=2
+[2025-05-17 13:54:03] [ERROR] 콘텐츠 추천 중 오류 발생: (pymysql.err.OperationalError) (1054, "Unknown column 'id' in 'field list'")
+[SQL: 
+                SELECT id FROM contents 
+                WHERE user_id = %(user_id)s 
+                ORDER BY update_date DESC 
+                LIMIT 1
+            ]
+[parameters: {'user_id': 2}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-05-17 13:55:52] [INFO] 가져온 유저 ID 목록: [2]
+[2025-05-17 13:55:52] 콘텐츠 추천 시작: user_id=2
+[2025-05-17 13:56:10] [ERROR] 콘텐츠 추천 중 오류 발생: (pymysql.err.OperationalError) (1054, "Unknown column 'id' in 'field list'")
+[SQL: 
+                SELECT id FROM contents 
+                WHERE user_id = %(user_id)s 
+                ORDER BY update_date DESC 
+                LIMIT 1
+            ]
+[parameters: {'user_id': 2}]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-05-17 14:00:13] [INFO] 가져온 유저 ID 목록: [2]
+[2025-05-17 14:00:13] 콘텐츠 추천 시작: user_id=2
+[2025-05-17 14:00:27] 콘텐츠 추천 완료: user_id=2
+[2025-05-17 14:00:28] [PUB] 완료 메시지 전송: {'contentsId': 29}
+[2025-05-17 14:00:28] 모든 콘텐츠 추천 작업 완료.
+
