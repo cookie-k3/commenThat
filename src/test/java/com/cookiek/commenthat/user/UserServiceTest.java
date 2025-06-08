@@ -5,6 +5,7 @@ import com.cookiek.commenthat.domain.User;
 import com.cookiek.commenthat.repository.UserInterface;
 import com.cookiek.commenthat.repository.UserRepository;
 import com.cookiek.commenthat.service.UserService;
+import com.cookiek.commenthat.util.AES256Util;
 import com.cookiek.commenthat.util.SHA256Util;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-@Rollback(value = false)
+//@Rollback(value = false)
 //@Rollback
 public class UserServiceTest {
 
@@ -28,21 +29,58 @@ public class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-
     @Test
     public void 회원가입() throws Exception {
-        //given
+        // given: 사용자 정보 생성
         User user = new User();
-        user.setName("kmh");
-        user.setEmail("db@naver.com");
-        user.setPassword("dabin1234");
-        user.setChannelName("연예 뒤통령이진호");
-//        user.setGender("여");
-        user.setLoginId("dabin11");
+        user.setName("cookiek");
+        user.setEmail("cookiek@gmail.com");
+        user.setPassword("cookiek1234");
+        user.setChannelName("cookiek channel");
+        user.setLoginId("cookiek11");
         user.setNationality("kr");
 
+        // 암호화/해싱 처리 (실제 서비스 흐름과 맞추기 위해 수동 적용)
+        String encryptedName = AES256Util.encrypt(user.getName());
+        String encryptedEmail = AES256Util.encrypt(user.getEmail());
+        String hashedPassword = SHA256Util.hash(user.getPassword());
+
+        user.setName(encryptedName);
+        user.setEmail(encryptedEmail);
+        user.setPassword(hashedPassword);
+
+        // when: 저장
+        userInterface.save(user);
+        em.flush();
+        em.clear(); // 실제 DB에서 다시 조회되도록
+
+        // then: 저장된 사용자 확인 및 암호화/해싱 여부 확인
+        User savedUser = userInterface.findByLoginId("cookiek11").get();
+
+        System.out.println("저장된 이름 (암호화): " + savedUser.getName());
+        System.out.println("복호화된 이름: " + AES256Util.decrypt(savedUser.getName()));
+
+        System.out.println("저장된 이메일 (암호화): " + savedUser.getEmail());
+        System.out.println("복호화된 이메일: " + AES256Util.decrypt(savedUser.getEmail()));
+
+        System.out.println("저장된 비밀번호 (SHA-256 해시): " + savedUser.getPassword());
+        System.out.println("입력값 해시와 일치? " +
+                savedUser.getPassword().equals(SHA256Util.hash("cookiek1234")));
+    }
+//    @Test
+//    public void 회원가입() throws Exception {
+        //given
+//        User user = new User();
+//        user.setName("cookiek");
+//        user.setEmail("cookiek@gmail.com");
+//        user.setPassword("cookiek1234");
+//        user.setChannelName("cookiek channel");
+//        user.setGender("여");
+//        user.setLoginId("cookiek11");
+//        user.setNationality("kr");
+
         //when
-        String channelName = user.getChannelName();
+//        String channelName = user.getChannelName();
 //        String channelId = notSyncService.getChannelId(channelName);
 
 //        if (channelId == null) {
@@ -53,10 +91,10 @@ public class UserServiceTest {
 //        Long savedId = userService.join(user);
 
         //then
-        em.flush();
+//        em.flush();
 //        assertEquals(user, userRepository.findById(savedId));
 
-    }
+//    }
 
     @Test
     public void 회원수정() throws Exception {

@@ -6,6 +6,7 @@ import com.cookiek.commenthat.repository.ChannelInfoRepository;
 import com.cookiek.commenthat.dto.VideoViewStatDto;
 import com.cookiek.commenthat.repository.VideoMetaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +39,8 @@ public class AnalysisService {
                 .sorted((a, b) -> a.getDate().compareTo(b.getDate())) // 날짜순 정렬 (오름차순)
                 .collect(Collectors.toList());
     }
+
+
 
 
 

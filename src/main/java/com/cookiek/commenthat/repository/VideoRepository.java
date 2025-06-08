@@ -13,35 +13,43 @@ public class VideoRepository {
 
     private final EntityManager em;
 
-//    public Long getRecentVideoId(Long userId) {
-//        return em.createQuery("""
-//            SELECT v.id
-//            FROM Video v
-//            WHERE v.user.id = :userId
-//            ORDER BY v.date DESC
-//            """, Long.class)
-//                .setParameter("userId", userId)
-//                .setMaxResults(1)  // 가장 최근 1개만
-//                .getSingleResult();
-//    } 영상이 없을 경우 javax.persistence.NoResultException 발생 -> catch에서 잡히기 전에 터짐
-//    -> Axios 요청이 500 에러로 끝나게 됨
-public Long getRecentVideoId(Long userId) {
-    return em.createQuery("""
-        SELECT v.id
-        FROM Video v
-        WHERE v.user.id = :userId
-        ORDER BY v.date DESC
-        """, Long.class)
-            .setParameter("userId", userId)
-            .setMaxResults(1)
-            .getResultList()
-            .stream()
-            .findFirst()
-            .orElse(null); // 결과가 없을 땐 null 반환
-}
+    public Long getRecentVideoId(Long userId) {
+        return em.createQuery("""
+            SELECT v.id
+            FROM Video v
+            WHERE v.user.id = :userId
+            ORDER BY v.date DESC
+            """, Long.class)
+                .setParameter("userId", userId)
+                .setMaxResults(1)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Long getMostRecentAnalyzedVideoId(Long userId) {
+        return em.createQuery("""
+            SELECT v.id
+            FROM Video v
+            WHERE v.user.id = :userId
+            AND EXISTS (
+                SELECT 1 FROM CategoryStat cs WHERE cs.video.id = v.id
+            )
+            AND EXISTS (
+                SELECT 1 FROM SentiStat ss WHERE ss.video.id = v.id
+            )
+            ORDER BY v.date DESC
+            """, Long.class)
+                .setParameter("userId", userId)
+                .setMaxResults(1)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
+    }
 
     public List<VideoDto> getVideoList(Long userId) {
-
         return em.createQuery("""
             SELECT new com.cookiek.commenthat.dto.VideoDto(v.id, v.title)
             FROM Video v
@@ -50,6 +58,5 @@ public Long getRecentVideoId(Long userId) {
             """, VideoDto.class)
                 .setParameter("userId", userId)
                 .getResultList();
-
     }
 }
